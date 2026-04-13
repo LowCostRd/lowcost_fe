@@ -17,14 +17,16 @@ const VerifyEmail = () => {
 
   return (
     <div className="flex w-full h-screen justify-evenly">
-      
-   
-      <div className="">
-        <img src={processImg} className="w-full max-w-md" />
+
+      <div className="w-1/2 ">
+        <img src={processImg} className="w-1/2" />
       </div>
 
-      <div className="">
-        <Step steps={STEPS} currentStep={3} />
+      <div className="max-w-full ">
+        <div className="min-w-max px-12 py-2">
+          <Step steps={STEPS} currentStep={2} />
+        </div>
+        <hr className=" border-gray-300" />
       </div>
 
     </div>
