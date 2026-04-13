@@ -8,7 +8,7 @@ const SignUp = () => {
     { id: 2, label: "Profile" },
     { id: 3, label: "Review" },
   ];
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep] = useState(1);
   return (
     <div className="">
       <Onboarding>
