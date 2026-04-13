@@ -1,5 +1,5 @@
 import Step from "../component/Step";
-import processImg from "../assets/onboarding/Group (10).png";
+import Onboarding from "../component/Onboarding";
 
 interface StepConfig {
   id: number;
@@ -16,16 +16,18 @@ const VerifyEmail = () => {
   ];
 
   return (
-    <div className="flex w-full h-screen justify-evenly">
+    <div className="">
+      
+    <Onboarding>
+        <div className="">
+          <Step steps={STEPS} currentStep={2} />
+
+        </div>
+      </Onboarding>
       
    
-      <div className="">
-        <img src={processImg} className="w-full max-w-md" />
-      </div>
+      
 
-      <div className="">
-        <Step steps={STEPS} currentStep={3} />
-      </div>
 
     </div>
   );
