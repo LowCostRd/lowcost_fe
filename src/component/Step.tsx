@@ -62,6 +62,7 @@ interface StepperProps {
 }
 
 const Step = ({ steps, currentStep }: StepperProps) => {
+  
   const getStatus = (stepId: number): StepStatus => {
     if (stepId < currentStep) return 'completed'
     if (stepId === currentStep) return 'active'
