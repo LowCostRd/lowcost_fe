@@ -69,17 +69,21 @@ const Step = ({ steps, currentStep }: StepperProps) => {
     return 'inactive'
   }
 
+  
+
   return (
-    <div style={{ display: 'flex', alignItems: 'center', padding: '18px 0' }}>
+    <div className='flex flex-row py-6 justify-evenly ' >
       {steps.map((step) => {
         const status = getStatus(step.id)
         return (
-          <div key={step.id} style={{ display: 'flex', alignItems: 'center', gap: 8, paddingRight: 30 }}>
+          <div key={step.id} className={`flex items-center gap-3 `} >
             <StepBadge step={step} status={status} />
             <span style={labelStyles[status]}>{step.label}</span>
+  
           </div>
         )
       })}
+      
     </div>
   )
 }
