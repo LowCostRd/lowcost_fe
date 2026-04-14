@@ -8,9 +8,11 @@ import Select from "../component/Select";
 import Button from "../component/Botton";
 const SignUp = () => {
   const steps = [
-    { id: 1, label: "Account" },
-    { id: 2, label: "Profile" },
-    { id: 3, label: "Review" },
+      { id: 1, label: 'Account setup' },
+    { id: 2, label: 'Verify email' },
+    { id: 3, label: 'Practice identity' },
+    { id: 4, label: 'Practice details' },
+    { id: 5, label: 'Compliance & terms' },
   ];
 
   const [currentStep] = useState(1);
@@ -23,7 +25,7 @@ const SignUp = () => {
     { label: "Medical Director", value: "medical_director" },
     { label: "Practice Owner", value: "practice_owner" },
     { label: "Front Desk Manager", value: "front_desk_manager" },
-    { label: "IT Manager", value: "it_manager" }, // ✅ fixed
+    { label: "IT Manager", value: "it_manager" },
     { label: "Other", value: "other" },
   ];
   return (
