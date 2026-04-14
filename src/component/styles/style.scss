@@ -1,0 +1,63 @@
+.onboarding-wrapper {
+  display: flex;
+
+  min-height: 100vh;
+  .onboarding-box-wrapper {
+    background-image: url("../../assets/onboarding/bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 47%;
+    
+
+    .onboarding-logo-box {
+      display: flex;
+    padding: 2rem 2rem 2rem 3rem;
+      img {
+        width: 8rem;
+     
+      }
+    }
+    .onboarding-content-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      gap: 4rem;
+      margin-top: auto;     
+      margin-bottom: auto;
+      .onboarding-content-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        .top-content-header-text {
+          font-size: 38px;
+          font-weight: 500;
+          color: #1f2937;
+          line-height: 2rem;
+          letter-spacing: 1px;
+          .top-content-highlight {
+            color: #5b0aff;
+          }
+        }
+        .top-content-body-text {
+          color: #6b7280;
+          font-size: 17px;
+       
+        }
+      }
+      .onboarding-content-bottom {
+        background-image: url("../../assets/onboarding/Group\ \(10\).png");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 34rem;
+        width: 100%;
+      }
+    }
+  }
+}
