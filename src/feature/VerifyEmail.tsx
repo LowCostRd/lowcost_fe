@@ -3,6 +3,7 @@ import Onboarding from "../component/Onboarding";
 import { useEffect, useRef, useState } from "react";
 import shieldTick from "../assets/onboarding/shield-tick.png";
 import { Link } from "react-router-dom";
+import arrLeft from "../assets/general/arrow-left.png";
 
 interface StepConfig {
   id: number;
@@ -76,6 +77,9 @@ const VerifyEmail = () => {
     inputRefs.current[0]?.focus();
   };
 
+
+const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
+
   return (
     <div className="">
       <Onboarding>
@@ -84,7 +88,7 @@ const VerifyEmail = () => {
           <hr className="border-gray-200 w-full" />
 
           <div className="mt-20 lg:px-10 xl:px-36">
-            <h1 className="font-semibold leading-6 text-[28px] text-[#1F2937] mb-2" style={{letterSpacing : 1}}>
+            <h1 className="font-semibold leading-6 text-[30px] text-[#1F2937] mb-2" style={{letterSpacing : 1}}>
               Verify Your Email
             </h1>
             <p className="text-[15px] text-[#1F2937] font-normal mb-7 leading-relaxed">
@@ -150,14 +154,18 @@ const VerifyEmail = () => {
             </div>
 
             {/* Actions */}
-            <button className="w-full bg-[#7C3AED]  text-[#F5F3FF] font-semibold rounded-lg py-3.5 text-md transition mb-3 cursor-pointer">
+           <button
+              className={`w-full text-[#F5F3FF] font-semibold rounded-lg py-3.5 text-sm transition mb-3 cursor-pointer
+                ${isOtpComplete ? "bg-[#5B0AFF]" : "bg-[#7C3AED]"}`}
+            >
               Verify &amp; Continue
             </button>
-            <button className="w-full bg-[#F7F6FA] text-[#6B7280] font-medium rounded-lg py-3.5 text-sm transition cursor-pointer">
-                <Link to={"/"}>
-                     ← Go Back
-                </Link>
+           <Link to={"/"}>
+            <button className="w-full flex items-center justify-center gap-2 bg-[#F7F6FA] text-[#6B7280] font-semibold rounded-lg py-3.5 text-sm transition cursor-pointer">
+              <img src={arrLeft} alt="" className="w-4 h-4" />
+              Go Back
             </button>
+          </Link>
           </div>
         </div>
       </Onboarding>
