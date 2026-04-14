@@ -81,7 +81,7 @@ const VerifyEmail = () => {
 const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
 
   return (
-    <div className="">
+  
       <Onboarding>
         <div className="w-full">
           <Step steps={STEPS} currentStep={2} />
@@ -169,7 +169,7 @@ const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
           </div>
         </div>
       </Onboarding>
-    </div>
+    
   );
 };
 

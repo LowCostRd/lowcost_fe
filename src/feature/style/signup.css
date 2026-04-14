@@ -1,0 +1,114 @@
+.account-setup-general-wrap .account-setup-inner-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 8rem;
+  gap: 3rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .account-setup-header-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .account-setup-header-wrap .account-setup-header-text {
+  font-size: 3rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .account-setup-header-wrap .account-setup-body-text {
+  color: #1f2937;
+  font-size: 1.6rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap {
+  display: flex;
+  gap: 2rem;
+  flex-direction: column;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-options-wrap-inner {
+  display: flex;
+  gap: 2rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-options-wrap-inner .setup-option-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-radius: 0.8rem;
+  background-color: #f7f6fa;
+  width: 28rem;
+  cursor: pointer;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-options-wrap-inner .setup-option-box .option-icon-box {
+  width: 3rem;
+  height: 3rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-options-wrap-inner .setup-option-box .option-icon-box .img-box {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-options-wrap-inner .setup-option-box .option-text {
+  font-size: 1.2rem;
+  color: #606671;
+  font-weight: 500;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-option-box-under {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-option-box-under .setup-line {
+  width: 100%;
+  height: 0.1rem;
+  background-color: #ececec;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-options-wrap .setup-option-box-under .divider-text {
+  font-size: 1.6rem;
+  color: #606671;
+  font-weight: 500;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  width: 100%;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .setup-inner-box {
+  display: flex;
+  gap: 2rem;
+  position: relative;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .setup-button-wrap {
+  width: 100%;
+  margin-top: 3rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .setup-button-wrap .btn {
+  width: 100%;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .login-link-wrap {
+  display: flex;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .login-link-wrap .link-text {
+  color: #606671;
+  font-size: 1.6rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .login-link-wrap .link-text .link-inner-text {
+  color: #5b0aff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .terms-of-service-box {
+  margin-top: 1rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .terms-of-service-box .terms-of-service-text {
+  color: #606671;
+  font-size: 1.6rem;
+}
+.account-setup-general-wrap .account-setup-inner-wrap .setup-general-input-box .terms-of-service-box .terms-of-service-text .terms-of-service-inner-text {
+  color: #5b0aff;
+  cursor: pointer;
+  font-weight: 600;
+}/*# sourceMappingURL=signup.css.map */

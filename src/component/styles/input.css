@@ -1,0 +1,113 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+.input-wrapper .input-label {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #333;
+}
+.input-wrapper .input-required {
+  color: #e74c3c;
+}
+.input-wrapper .input-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  background: #fff;
+  transition: border-color 0.2s ease;
+}
+.input-wrapper .input-container:focus-within {
+  border-color: #7c3aed;
+}
+.input-wrapper .input-container--error {
+  border-color: #e74c3c;
+}
+.input-wrapper .input-container--error:focus-within {
+  border-color: #e74c3c;
+}
+.input-wrapper .input-container .input-field {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  background: transparent;
+  color: #111;
+}
+.input-wrapper .input-container .input-field::-moz-placeholder {
+  color: #9ca3af;
+}
+.input-wrapper .input-container .input-field::placeholder {
+  color: #9ca3af;
+}
+.input-wrapper .input-container .input-field .options-box {
+  background-color: #d1d5db;
+}
+.input-wrapper .input-container .input-icon {
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+}
+.input-wrapper .input-container .input-icon:hover {
+  color: #333;
+}
+.input-wrapper .input-error {
+  font-size: 12px;
+  color: #e74c3c;
+  margin: 0;
+}
+.input-wrapper .input-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.select-arrow {
+  color: #9ca3af;
+  transition: transform 0.2s ease;
+}
+
+.select-arrow--open {
+  transform: rotate(180deg);
+}
+
+.input-placeholder {
+  color: #9ca3af;
+}
+
+.select-dropdown {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  z-index: 100;
+  max-height: 18rem;
+  width: 20rem;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.select-option {
+  padding: 1rem 1.4rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #111;
+}
+.select-option:hover {
+  background: #f3f4f6;
+}
+
+.select-option--active {
+  color: #7c3aed;
+  font-weight: 500;
+}/*# sourceMappingURL=input.css.map */
