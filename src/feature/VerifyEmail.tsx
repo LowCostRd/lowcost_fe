@@ -84,7 +84,7 @@ const VerifyEmail = () => {
           <hr className="border-gray-200 w-full" />
 
           <div className="mt-20 lg:px-10 xl:px-36">
-            <h1 className="font-medium leading-6 text-[28px] text-[#1F2937] mb-2" style={{letterSpacing : 1}}>
+            <h1 className="font-semibold leading-6 text-[28px] text-[#1F2937] mb-2" style={{letterSpacing : 1}}>
               Verify Your Email
             </h1>
             <p className="text-[15px] text-[#1F2937] font-normal mb-7 leading-relaxed">
