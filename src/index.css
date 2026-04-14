@@ -78,10 +78,7 @@
     color: #535bf2;
   }
 
-  code,
-  pre {
-    font-family: "SF Mono", "Fira Code", monospace;
-  }
+
 
   @media (prefers-color-scheme: light) {
     :root {
