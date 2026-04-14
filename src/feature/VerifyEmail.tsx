@@ -85,20 +85,20 @@ const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
       <Onboarding>
         <div className="w-full">
           <Step steps={STEPS} currentStep={2} />
-          <hr className="border-gray-200 w-full" />
+          <hr className="border-[#E5E7EB] w-full " />
 
-          <div className="mt-20 lg:px-10 xl:px-36">
-            <h1 className="font-semibold leading-6 text-[30px] text-[#1F2937] mb-2" style={{letterSpacing : 1}}>
+          <div className=" mt-36 w-full max-w-180.5 mx-auto ">
+            <h1 className="font-semibold leading-6 text-[30px] text-[#1F2937] mb-6" style={{letterSpacing : 1}}>
               Verify Your Email
             </h1>
-            <p className="text-[15px] text-[#1F2937] font-normal mb-7 leading-relaxed">
+            <p className="text-[14px] text-[#1F2937] font-normal mb-10 ">
               We sent a 6-digit code to{" "}
-              <span className="font-normal text-[#1F2937]">{email}</span>.
+              <span className="font-medium text-[#1F2937]">{email}</span>.
               Enter it below to confirm your identity.
             </p>
 
             {/* OTP Inputs */}
-            <div className="flex gap-3 mb-2">
+            <div className="flex gap-3 mb-7">
               {otp.map((digit, i) => (
                 <input
                   key={i}
@@ -109,7 +109,7 @@ const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
                   value={digit}
                   onChange={(e) => handleChange(e.target.value, i)}
                   onKeyDown={(e) => handleKeyDown(e, i)}
-                  className={`w-12.5 h-12.5 border rounded-lg text-center text-xl font-semibold caret-transparent  focus:outline-none transition
+                  className={`w-16.5 h-16.5 border rounded-lg text-center text-xl font-semibold caret-transparent  focus:outline-none transition
                     ${wrong && i === 5
                       ? "bg-[#FFF1F4] text-[#CA2044] border-[#CA2044]"
                       : digit
@@ -122,31 +122,31 @@ const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
 
     
             {wrong && (
-              <p className="text-[#CA2044] text-sm font-normal mt-1 mb-2">
+              <p className="text-[#CA2044] text-[14px] font-normal mt-1 mb-7">
                 Enter the correct numbers sent to your email
               </p>
             )}
 
             {/* Timer */}
-            <p className="text-sm font-semibold text-[#1F2937] mb-2 mt-3">{timerLabel}</p>
+            <p className="text-[16px] font-semibold text-[#1F2937] mb-5 mt-3">{timerLabel}</p>
 
             {/* Resend */}
-            <p className="text-sm text-[#6B7280] mb-6">
+            <p className="text-[14px] text-[#6B7280] mb-12">
               Didn't receive the code?{" "}
               <button
                 onClick={handleResend}
-                className="text-[#5B0AFF] font-medium cursor-pointer"
+                className="text-[#5B0AFF] text-[14px]  font-medium cursor-pointer"
               >
                 Click to Resend
               </button>
             </p>
 
             {/* Info box */}
-            <div className="bg-[#F7F6FA] rounded-lg p-4 flex gap-2 items-start mb-7">
-              <img src={shieldTick} alt="Security" className="w-5 h-5" />
+            <div className="bg-[#F7F6FA] rounded-lg px-6 py-8 flex gap-4 mb-18">
+              <img src={shieldTick} alt="Security" className="w-8 h-8" />
               <div>
-                <h4 className="text-md font-medium text-[#1F2937] mb-1">Why we verify your email</h4>
-                <p className="text-sm text-[#6B7280] leading-relaxed">
+                <h4 className="text-[15px] font-medium text-[#1F2937] mb-1">Why we verify your email</h4>
+                <p className="text-[12px] text-[#6B7280] leading-relaxed">
                   Conversa handles sensitive patient call data. We verify every account to ensure
                   only authorized personnel can deploy AI for a healthcare practice.
                 </p>
@@ -155,14 +155,14 @@ const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
 
             {/* Actions */}
            <button
-              className={`w-full text-[#F5F3FF] font-semibold rounded-lg py-3.5 text-sm transition mb-3 cursor-pointer
+              className={`w-full text-[#F5F3FF] font-semibold rounded-lg py-4 text-[14px] transition mb-3 cursor-pointer
                 ${isOtpComplete ? "bg-[#5B0AFF]" : "bg-[#7C3AED]"}`}
             >
               Verify &amp; Continue
             </button>
            <Link to={"/"}>
-            <button className="w-full flex items-center justify-center gap-2 bg-[#F7F6FA] text-[#6B7280] font-semibold rounded-lg py-3.5 text-sm transition cursor-pointer">
-              <img src={arrLeft} alt="" className="w-4 h-4" />
+            <button className="w-full flex items-center justify-center gap-2 bg-[#F7F6FA] text-[#6B7280] font-semibold rounded-lg py-4 text-[14px] cursor-pointer">
+              <img src={arrLeft} alt="" className="w-7 h-7" />
               Go Back
             </button>
           </Link>

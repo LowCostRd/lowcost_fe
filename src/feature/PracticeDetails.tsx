@@ -85,21 +85,21 @@ const PracticeDetails = () => {
           <Step steps={STEPS} currentStep={4} />
           <hr className="border-gray-200 w-full" />
 
-          <div className="mt-14 lg:px-10 xl:px-36">
+          <div className="mt-36 w-full max-w-180.5 mx-auto">
             <h1
-              className="font-semibold text-[30px] text-[#1F2937] mb-2"
+              className="font-semibold text-[30px] text-[#1F2937] mb-3"
               style={{ letterSpacing: 1 }}
             >
               Practice Details
             </h1>
-            <p className="text-[15px] text-[#1F2937] mb-8">
+            <p className="text-[14px] text-[#1F2937] mb-10">
               The AI uses this to answer patient questions accurately from day one.
             </p>
 
    
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-[15px] font-semibold text-[#1F2937] mb-1">
+                <label className="block text-[14px] font-semibold text-[#1F2937] mb-3">
                   Main phone number *
                 </label>
                 <input
@@ -111,7 +111,7 @@ const PracticeDetails = () => {
                     if (errors.phone)
                       setErrors((prev) => ({ ...prev, phone: false }));
                   }}
-                  className={`w-full  h-10.5 px-3 border rounded-lg text-[14px] text-[#1F2937] placeholder-[#9498B8] outline-none transition
+                  className={`w-full  h-16 px-8 border rounded-lg text-[14px] text-[#1F2937] placeholder-[#9498B8] outline-none transition
                     ${
                       errors.phone
                         ? "border-[#CA2044] bg-[#FFF1F4]"
@@ -119,18 +119,18 @@ const PracticeDetails = () => {
                     }`}
                 />
                 {errors.phone ? (
-                  <p className="text-xs text-[#CA2044] mt-1">
+                  <p className="text-[13px] text-[#CA2044] mt-1">
                     Phone number is required
                   </p>
                 ) : (
-                  <p className="text-xs text-[#606671] font-normal mt-1">
+                  <p className="text-[13px] text-[#606671] font-normal mt-2">
                     Your existing number, separate from your AI line
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-[15px] font-semibold text-[#1F2937] mb-1">
+                <label className="block text-[14px] font-semibold text-[#1F2937] mb-3">
                   Website{" "}
                   <span className="font-normal">(optional)</span>
                 </label>
@@ -139,14 +139,14 @@ const PracticeDetails = () => {
                   placeholder="Ex. www.hospital.com"
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
-                  className="w-full h-10.5 px-3 border border-[#94A3B8] rounded-lg text-sm text-[#1F2937] placeholder-[#9498B8] outline-none"
+                  className="w-full h-16 px-8 border border-[#94A3B8] rounded-lg text-[14px] text-[#1F2937] placeholder-[#9498B8] outline-none"
                 />
               </div>
             </div>
 
             {/* Practitioners */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-[#1F2937] mb-1">
+            <div className="mb-10">
+              <label className="block text-[14px] font-semibold text-[#1F2937] mb-3">
                 Number of practitioners *
               </label>
                 <PractitionerDropdown
@@ -159,31 +159,31 @@ const PracticeDetails = () => {
                   hasError={errors.practitioners}
                 />
               {errors.practitioners && (
-                <p className="text-xs text-[#CA2044] mt-1">
+                <p className="text-[13px] text-[#CA2044] mt-1">
                   Please select a range
                 </p>
               )}
             </div>
 
             {/* Insurance plans */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-[#1F2937] mb-1">
+            <div className="mb-12">
+              <label className="block text-[14px] font-semibold text-[#1F2937] ">
                 Accepted insurance plans *
               </label>
-              <p className="text-xs text-[#6B7280] font-normal mb-3">
+              <p className="text-[13px] text-[#6B7280] font-normal mb-5">
                 The AI will confirm these plans when patients ask about coverage.
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-5 ">
                 {INSURANCE_PLANS.map((plan) => (
                   <button
                     key={plan}
                     type="button"
                     onClick={() => togglePlan(plan)}
-                    className={`px-4 py-1.5 rounded-full text-sm transition-all cursor-pointer
+                    className={`px-4 py-1.5 rounded-full text-[13px] transition-all cursor-pointer
                       ${
                         selectedPlans.has(plan)
                           ? "bg-[#F3EDFF]  text-[#5B0AFF] font-medium"
-                          : "bg-[#F7F7F8] text-[#606671] "
+                          : "bg-[#F7F7F8] text-[#606671] font-medium"
                       }`}
                   >
                     {plan}
@@ -191,7 +191,7 @@ const PracticeDetails = () => {
                 ))}
               </div>
               {errors.plans && (
-                <p className="text-xs text-[#CA2044] mt-2">
+                <p className="text-[13px] text-[#CA2044] mt-2">
                   Select at least one option
                 </p>
               )}
@@ -199,13 +199,13 @@ const PracticeDetails = () => {
 
             {/* Actions */}
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 h-11.5 px-6 outline-none bg-[#F7F6FA] rounded-lg text-sm font-semibold text-[#6B7280] cursor-pointer">
-              <img src={arrLeft} alt="" className="w-4.5 h-4.5" />
+              <button className="flex items-center gap-2 h-16.5 px-8 outline-none bg-[#F7F6FA] rounded-lg text-[14px] font-semibold text-[#6B7280] cursor-pointer">
+              <img src={arrLeft} alt="" className="w-7 h-7" />
               Go back
             </button>
              <button
               onClick={handleContinue}
-              className={`flex-1 h-11.5 text-white font-semibold rounded-lg text-sm  cursor-pointer
+              className={`flex-1 h-16.5 text-white font-semibold rounded-lg text-[14px] w-100.5  cursor-pointer
                 ${isFormComplete ? "bg-[#5B0AFF]" : "bg-[#7C3AED]"}`}
             >
               Continue

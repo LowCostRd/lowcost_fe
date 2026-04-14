@@ -36,7 +36,7 @@ const PractitionerDropdown = ({
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`w-full h-13 px-4 flex items-center justify-between rounded-xl border text-sm font-normal bg-white cursor-pointer transition
+        className={`w-full h-16 px-8 flex items-center justify-between rounded-xl border text-[14px] font-normal bg-white cursor-pointer transition
           ${
             open
               ? "border-[#7C3AED]"
@@ -50,7 +50,7 @@ const PractitionerDropdown = ({
           {value || "Select a range"}
         </span>
         <svg
-          className={`w-5 h-5 text-[#9498B8] transition-transform ${open ? "rotate-180" : ""}`}
+          className={`w-7 h-7 text-[#9498B8] transition-transform ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -67,7 +67,7 @@ const PractitionerDropdown = ({
       {open && (
         <div className="absolute z-50 mt-1 w-full bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
           <div className="px-5 py-4">
-            <p className="text-sm text-[#9CA3AF]">Select your role</p>
+            <p className="text-[14px] text-[#9CA3AF]">Select your role</p>
           </div>
 
           {PRACTITIONER_OPTIONS.map((option, i) => (
@@ -78,7 +78,7 @@ const PractitionerDropdown = ({
                   onChange(option);
                   setOpen(false);
                 }}
-                className={`w-full px-5 py-4 text-left text-sm font-normal cursor-pointer transition
+                className={`w-full px-5 py-4 text-left text-[14px] font-normal cursor-pointer transition
                   ${
                     value === option
                       ? "bg-[#EDE9FE] text-[#7C3AED] font-medium"
