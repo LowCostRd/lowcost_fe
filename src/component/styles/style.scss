@@ -9,15 +9,15 @@
     background-repeat: no-repeat;
     display: flex;
     flex-direction: column;
-    flex: 0 0 45%;
+    flex: 0 0 47%;
     
 
     .onboarding-logo-box {
       display: flex;
-    padding: 3rem 2rem 2rem 3rem;
+    padding: 2rem 2rem 2rem 3rem;
       img {
-        width: 13rem;
-        height: 2.5rem;
+        width: 8rem;
+     
       }
     }
     .onboarding-content-box {
@@ -35,17 +35,19 @@
         align-items: center;
         gap: 1rem;
         .top-content-header-text {
-          font-size: 4rem;
+          font-size: 38px;
           font-weight: 600;
           color: #1f2937;
-          line-height: 4rem;
+          line-height: 2rem;
+          letter-spacing: 1px;
           .top-content-highlight {
             color: #5b0aff;
           }
         }
         .top-content-body-text {
           color: #6b7280;
-          font-size: 1.8rem;
+          font-size: 17px;
+       
         }
       }
       .onboarding-content-bottom {
@@ -53,7 +55,7 @@
         background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
-        height: 50rem;
+        height: 34rem;
         width: 100%;
       }
     }
