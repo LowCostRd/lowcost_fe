@@ -1,3 +1,4 @@
+import ComplianceTerms from "../feature/ ComplianceTerms";
 import PracticeDetails from "../feature/PracticeDetails";
 import SignUp from "../feature/SignUp";
 
@@ -15,5 +16,9 @@ export const Route = [
     {
         path: "/practice-details",
         element : <PracticeDetails/>
+    },
+    {
+        path: "/compliance-terms",
+        element : <ComplianceTerms/>
     }
 ]
