@@ -76,7 +76,7 @@ const Step = ({ steps, currentStep }: StepperProps) => {
       {steps.map((step) => {
         const status = getStatus(step.id)
         return (
-          <div key={step.id} className={`flex items-center gap-3 `} >
+          <div key={step.id} className={`flex items-center  max-xl:gap-1 gap-3 `} >
             <StepBadge step={step} status={status} />
             <span style={labelStyles[status]}>{step.label}</span>
   

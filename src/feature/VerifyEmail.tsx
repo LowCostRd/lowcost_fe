@@ -2,6 +2,7 @@ import Step from "../component/Step";
 import Onboarding from "../component/Onboarding";
 import { useEffect, useRef, useState } from "react";
 import shieldTick from "../assets/onboarding/shield-tick.png";
+import { Link } from "react-router-dom";
 
 interface StepConfig {
   id: number;
@@ -82,13 +83,13 @@ const VerifyEmail = () => {
           <Step steps={STEPS} currentStep={2} />
           <hr className="border-gray-200 w-full" />
 
-          <div className="mt-20 px-36">
-            <h1 className="font-semibold leading-6 text-[26px] text-gray-900 mb-2">
+          <div className="mt-20 lg:px-10 xl:px-36">
+            <h1 className="font-medium leading-6 text-[28px] text-[#1F2937] mb-2" style={{letterSpacing : 1}}>
               Verify Your Email
             </h1>
-            <p className="text-sm text-gray-500 mb-7 leading-relaxed">
+            <p className="text-[15px] text-[#1F2937] font-normal mb-7 leading-relaxed">
               We sent a 6-digit code to{" "}
-              <span className="font-medium text-gray-800">{email}</span>.
+              <span className="font-normal text-[#1F2937]">{email}</span>.
               Enter it below to confirm your identity.
             </p>
 
@@ -104,12 +105,12 @@ const VerifyEmail = () => {
                   value={digit}
                   onChange={(e) => handleChange(e.target.value, i)}
                   onKeyDown={(e) => handleKeyDown(e, i)}
-                  className={`w-13 h-14 border-[1.5px] rounded-xl text-center text-xl font-semibold text-gray-900 focus:outline-none transition
+                  className={`w-12.5 h-12.5 border rounded-lg text-center text-xl font-semibold caret-transparent  focus:outline-none transition
                     ${wrong && i === 5
-                      ? "bg-red-50 border-red-700 focus:border-red-700 focus:ring-2 focus:ring-red-100"
+                      ? "bg-[#FFF1F4] text-[#CA2044] border-[#CA2044]"
                       : digit
-                      ? "bg-violet-50 border-violet-700 focus:border-violet-600 focus:ring-2 focus:ring-violet-100"
-                      : "bg-white border-gray-200 focus:border-violet-600 focus:ring-2 focus:ring-violet-100"
+                      ? "bg-[#F3EDFF] text-[#5B0AFF] border-[#5B0AFF]"
+                      : "bg-white border-[#94A3B8]"
                     }`}
                 />
               ))}
@@ -117,31 +118,31 @@ const VerifyEmail = () => {
 
     
             {wrong && (
-              <p className="text-red-600 text-sm font-medium mt-1 mb-2">
+              <p className="text-[#CA2044] text-sm font-normal mt-1 mb-2">
                 Enter the correct numbers sent to your email
               </p>
             )}
 
             {/* Timer */}
-            <p className="text-sm font-semibold text-gray-800 mb-2 mt-3">{timerLabel}</p>
+            <p className="text-sm font-semibold text-[#1F2937] mb-2 mt-3">{timerLabel}</p>
 
             {/* Resend */}
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-[#6B7280] mb-6">
               Didn't receive the code?{" "}
               <button
                 onClick={handleResend}
-                className="text-[#5B0AFF] font-medium hover:underline"
+                className="text-[#5B0AFF] font-medium cursor-pointer"
               >
                 Click to Resend
               </button>
             </p>
 
             {/* Info box */}
-            <div className="bg-[#F7F6FA] rounded-xl p-4 flex gap-2 items-start mb-7">
+            <div className="bg-[#F7F6FA] rounded-lg p-4 flex gap-2 items-start mb-7">
               <img src={shieldTick} alt="Security" className="w-5 h-5" />
               <div>
-                <h4 className="text-sm font-semibold text-gray-800 mb-1">Why we verify your email</h4>
-                <p className="text-xs text-gray-500 leading-relaxed">
+                <h4 className="text-md font-medium text-[#1F2937] mb-1">Why we verify your email</h4>
+                <p className="text-sm text-[#6B7280] leading-relaxed">
                   Conversa handles sensitive patient call data. We verify every account to ensure
                   only authorized personnel can deploy AI for a healthcare practice.
                 </p>
@@ -149,11 +150,13 @@ const VerifyEmail = () => {
             </div>
 
             {/* Actions */}
-            <button className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl py-3.5 text-sm transition mb-3 cursor-pointer">
+            <button className="w-full bg-[#7C3AED]  text-[#F5F3FF] font-semibold rounded-lg py-3.5 text-md transition mb-3 cursor-pointer">
               Verify &amp; Continue
             </button>
-            <button className="w-full bg-[#F7F6FA] text-gray-600 font-medium rounded-xl py-3.5 text-sm transition cursor-pointer">
-              ← Go Back
+            <button className="w-full bg-[#F7F6FA] text-[#6B7280] font-medium rounded-lg py-3.5 text-sm transition cursor-pointer">
+                <Link to={"/"}>
+                     ← Go Back
+                </Link>
             </button>
           </div>
         </div>
