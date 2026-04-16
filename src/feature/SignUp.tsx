@@ -84,6 +84,9 @@ const SignUp = () => {
 
   return (
     <Onboarding>
+      <div>
+         <Step steps={steps} currentStep={currentStep} />
+         <hr className="border-[#E5E7EB] w-full " />
       <div className="account-setup-general-wrap">
         <Step steps={steps} currentStep={currentStep} />
 
@@ -202,12 +205,13 @@ const SignUp = () => {
                 </span>{" "}
                 and{" "}
                 <span className="terms-of-service-inner-text">
-                  Privacy Policy
+                   Privacy Policy
                 </span>
               </p>
             </div>
           </div>
         </div>
+      </div>
       </div>
     </Onboarding>
   );

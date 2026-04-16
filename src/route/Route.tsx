@@ -1,3 +1,4 @@
+import ComplianceTerms from "../feature/ ComplianceTerms";
 import PracticeDetails from "../feature/PracticeDetails";
 import PracticeIdentity from "../feature/PracticeIdentity";
 import SignUp from "../feature/SignUp";
@@ -19,6 +20,10 @@ export const Route = [
   },
   {
     path: "/practice-identity",
-    element: <PracticeIdentity />,
+    },
+    {
+        path: "/compliance-terms",
+        element : <ComplianceTerms/>
+    
   },
 ];
