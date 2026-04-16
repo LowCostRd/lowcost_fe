@@ -127,30 +127,67 @@
   color: #7c3aed;
   font-weight: 500;
 }/*# sourceMappingURL=input.css.map */
+.password-popover {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 0;
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 1.6rem 2rem;
+  width: 100%;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
 
-.password-strength {
+.popover-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 1.2rem 0;
+}
+
+.popover-rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.popover-rule {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
 }
 
-.strength-segments {
-  display: flex;
-  gap: 4px;
-  flex: 1;
+.popover-rule-label {
+  font-size: 13px;
+  color: #cbd5e1;
 }
 
-.strength-segment {
-  height: 4px;
-  flex: 1;
-  border-radius: 99px;
-  transition: background-color 0.3s ease;
+.popover-rule-icon {
+  font-size: 13px;
+  font-weight: 700;
+  width: 18px;
+  text-align: center;
 }
 
-.strength-label {
-  font-size: 12px;
-  font-weight: 500;
-  min-width: 40px;
-  text-align: right;
-  transition: color 0.3s ease;
+.popover-rule-icon.passed {
+  color: #22c55e;
+}
+
+.popover-rule-icon.failed {
+  color: #ef4444;
+}
+
+.popover-arrow {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: #0f172a;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
 }

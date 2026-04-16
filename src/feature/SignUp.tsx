@@ -54,6 +54,14 @@ const [confirmPassword, setConfirmPassword] = useState("");
   confirmPassword: "",
 });
 
+const passwordRules = [
+  { label: "One lowercase letter (e.g. a)", test: (p: string) => /[a-z]/.test(p) },
+  { label: "One uppercase letter (e.g. A)", test: (p: string) => /[A-Z]/.test(p) },
+  { label: "One number (e.g. 7)",           test: (p: string) => /[0-9]/.test(p) },
+  { label: "One special character",         test: (p: string) => /[^A-Za-z0-9]/.test(p) },
+  { label: "Minimum 8 characters",          test: (p: string) => p.length >= 8 },
+];
+
 const validate = () => {
   const newErrors = {
     fullName: fullName.trim() === "" ? "Full name is required" : "",
@@ -63,11 +71,11 @@ const validate = () => {
       : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) 
         ? "Enter a valid email address" 
         : "",
-    password: password.trim() === "" 
-      ? "Password is required" 
-      : password.length < 8 
-        ? "Password must be at least 8 characters" 
-        : "",
+          password: password.trim() === ""
+        ? "Password is required"
+        : passwordRules.some((r) => !r.test(password))
+          ? "Please ensure your password meets all requirements"
+          : "",
     confirmPassword: confirmPassword.trim() === "" 
       ? "Please confirm your password" : password.trim() === "" ? "Password is required"
       : confirmPassword !== password 
@@ -174,6 +182,7 @@ const handleSubmit = () => {
                 required
                 type="password"
                 showStrength 
+                 value={password} 
                  error={errors.password}
                 onChange={(e) => 
                 {
