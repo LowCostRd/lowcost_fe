@@ -85,9 +85,9 @@ const PracticeDetails = () => {
           <Step steps={STEPS} currentStep={4} />
           <hr className="border-gray-200 w-full" />
 
-          <div className="mt-36 w-full max-w-180.5 mx-auto">
+          <div className="mt-30 w-full max-w-180.5 mx-auto">
             <h1
-              className="font-semibold text-[30px] text-[#1F2937] mb-3"
+              className="font-semibold text-[28px] text-[#1F2937] mb-3"
               style={{ letterSpacing: 1 }}
             >
               Practice Details

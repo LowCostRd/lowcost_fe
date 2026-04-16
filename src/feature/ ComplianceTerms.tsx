@@ -95,7 +95,7 @@ const ComplianceTerms = () => {
         <Step steps={STEPS} currentStep={5} />
         <hr className="border-[#E5E7EB] w-full mt-6" />
 
-        <div className="mt-36 w-full max-w-180.5 mx-auto">
+        <div className="mt-27 w-full max-w-180.5 mx-auto">
           <h1 className="font-semibold text-[30px] text-[#1F2937] mb-3 tracking-[0.5px]">
             Compliance & Agreements
           </h1>

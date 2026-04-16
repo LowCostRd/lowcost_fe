@@ -87,8 +87,8 @@ const isOtpComplete = otp.every((digit) => digit !== "") && !wrong;
           <Step steps={STEPS} currentStep={2} />
           <hr className="border-[#E5E7EB] w-full " />
 
-          <div className=" mt-36 w-full max-w-180.5 mx-auto ">
-            <h1 className="font-semibold leading-6 text-[30px] text-[#1F2937] mb-6" style={{letterSpacing : 1}}>
+          <div className=" mt-34 w-full max-w-180.5 mx-auto ">
+            <h1 className="font-semibold leading-6 text-[28px] text-[#1F2937] mb-6" style={{letterSpacing : 1}}>
               Verify Your Email
             </h1>
             <p className="text-[14px] text-[#1F2937] font-normal mb-10 ">

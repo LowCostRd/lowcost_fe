@@ -13,7 +13,7 @@
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-logo-box {
   display: flex;
-  padding: 3rem 2rem 2rem 3rem;
+  padding: 2rem 2rem 2rem 4rem;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-logo-box img {
   width: 13rem;
@@ -24,9 +24,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  text-align: center;
   gap: 4rem;
-  margin-top: auto;
+  margin-top: 4rem;
   margin-bottom: auto;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top {
@@ -40,14 +40,12 @@
   font-weight: 600;
   color: #1f2937;
   line-height: 4rem;
-}
-.onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top .top-content-header-text .top-content-highlight {
-  color: #5b0aff;
-}
+} 
+
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top .top-content-body-text {
   color: #6b7280;
-  font-size: 1.5rem;
-}
+  font-size: 16px;
+} 
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-bottom {
   background-image: url("../../assets/onboarding/Group (10).png");
   background-size: contain;
@@ -58,7 +56,7 @@
 }
 
 .btn {
-  padding: 1.5rem 1rem;
+  padding: 1.1rem 1rem;
   border: none;
   border-radius: 0.8rem;
   cursor: pointer;
@@ -74,20 +72,19 @@
   background-color: #e0e0e0;
   color: #333;
 }
-.btn--secondary:hover {
-  opacity: 0.9;
-}
+
 .btn--primary {
-  background-color: #7C3AED;
+  background-color: #5B0AFF;
   color: #fff;
 }
-.btn--primary:hover {
-  opacity: 0.9;
-}
+
 .btn--danger {
   background-color: #e74c3c;
   color: #fff;
 }
-.btn--danger:hover {
-  opacity: 0.9;
-}/*# sourceMappingURL=style.css.map */
+/*# sourceMappingURL=style.css.map */
+
+.btn--unfilled {
+  background-color: #7C3AED;
+  cursor: pointer; 
+}

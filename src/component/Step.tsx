@@ -72,7 +72,7 @@ const Step = ({ steps, currentStep }: StepperProps) => {
   
 
   return (
-    <div className='flex flex-row py-6 justify-evenly ' >
+    <div className='flex flex-row py-7 justify-evenly ' >
       {steps.map((step) => {
         const status = getStatus(step.id)
         return (

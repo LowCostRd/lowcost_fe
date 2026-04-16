@@ -12,14 +12,7 @@
     flex: 0 0 47%;
     
 
-    .onboarding-logo-box {
-      display: flex;
-    padding: 2rem 2rem 2rem 3rem;
-      img {
-        width: 8rem;
-     
-      }
-    }
+    
     .onboarding-content-box {
       display: flex;
       flex-direction: column;
@@ -34,19 +27,10 @@
         flex-direction: column;
         align-items: center;
         gap: 1rem;
-        .top-content-header-text {
-          font-size: 38px;
-          font-weight: 600;
-          color: #1f2937;
-          line-height: 2rem;
-          letter-spacing: 1px;
-          .top-content-highlight {
-            color: #5b0aff;
-          }
-        }
+       
         .top-content-body-text {
           color: #6b7280;
-          font-size: 17px;
+          font-size: 16px;
        
         }
       }
@@ -65,7 +49,7 @@
 
 
 .btn {
-  padding: 1.5rem 1rem;
+  padding: 1.1rem 1rem;
   border: none;
   border-radius: .8rem;
   cursor: pointer;
@@ -82,26 +66,18 @@
     background-color: #e0e0e0;
     color: #333;
 
-    &:hover {
-      opacity: 0.9;
-    }
   }
 
   &--primary {
     background-color: #7C3AED;
     color: #fff;
 
-    &:hover {
-      opacity: 0.9;
-    }
+  
   }
 
   &--danger {
     background-color: #e74c3c;
     color: #fff;
 
-    &:hover {
-      opacity: 0.9;
-    }
   }
 }

@@ -2,8 +2,8 @@ const Icons = {
   google: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="20"
+      height="20"
       fill="none"
       viewBox="0 0 24 24"
     >
@@ -35,8 +35,8 @@ const Icons = {
   microsoft: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="20"
+      height="20"
       fill="none"
       viewBox="0 0 24 24"
     >
@@ -77,5 +77,29 @@ const Icons = {
       ></path>
     </svg>
   ),
+  openEye: (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    fill="none"
+    viewBox="0 0 20 20"
+  >
+    <path
+      stroke="#9498B8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M10 3.333c-2.942 0-5.683 1.734-7.592 4.734-.75 1.175-.75 3.15 0 4.325C4.317 15.392 7.058 17.126 10 17.126c2.942 0 5.683-1.734 7.592-4.734.75-1.175.75-3.15 0-4.325C15.683 5.067 12.942 3.333 10 3.333z"
+    ></path>
+    <path
+      stroke="#9498B8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M10 13.333a3.333 3.333 0 1 0 0-6.666 3.333 3.333 0 0 0 0 6.666z"
+    ></path>
+  </svg>
+)
 };
 export default Icons;

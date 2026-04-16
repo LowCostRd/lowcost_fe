@@ -17,25 +17,79 @@ const SignUp = () => {
 
   const [currentStep] = useState(1);
   const [role, setRole] = useState("");
+  const [fullName, setFullName] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [confirmPassword, setConfirmPassword] = useState("");
+
+
+
   const options = [
-    { label: "Practice Manager", value: "practice_manager" },
-    { label: "Hospital Administrator", value: "hospital_administrator" },
-    { label: "Chief Executive Officer", value: "chief_executive_officer" },
-    { label: "Chief Operations Officer", value: "chief_operations_officer" },
-    { label: "Medical Director", value: "medical_director" },
-    { label: "Practice Owner", value: "practice_owner" },
-    { label: "Front Desk Manager", value: "front_desk_manager" },
-    { label: "IT Manager", value: "it_manager" },
+    { label: "Practice Manager", value: "practice manager" },
+    { label: "Hospital Administrator", value: "hospital administrator" },
+    { label: "Chief Executive Officer", value: "chief executive officer" },
+    { label: "Chief Operations Officer", value: "chief operations officer" },
+    { label: "Medical Director", value: "medical director" },
+    { label: "Practice Owner", value: "practice owner" },
+    { label: "Front Desk Manager", value: "front desk manager" },
+    { label: "IT Manager", value: "it manager" },
     { label: "Other", value: "other" },
   ];
+
+  const isFormFilled =
+  fullName.trim() !== "" &&
+  role !== "" &&
+  email.trim() !== "" &&
+  password.trim() !== "" &&
+  confirmPassword.trim() !== "";
+
+
+
+
+  const [errors, setErrors] = useState({
+  fullName: "",
+  role: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+});
+
+const validate = () => {
+  const newErrors = {
+    fullName: fullName.trim() === "" ? "Full name is required" : "",
+    role: role === "" ? "Please select your job title" : "",
+    email: email.trim() === "" 
+      ? "Email is required" 
+      : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) 
+        ? "Enter a valid email address" 
+        : "",
+    password: password.trim() === "" 
+      ? "Password is required" 
+      : password.length < 8 
+        ? "Password must be at least 8 characters" 
+        : "",
+    confirmPassword: confirmPassword.trim() === "" 
+      ? "Please confirm your password" : password.trim() === "" ? "Password is required"
+      : confirmPassword !== password 
+        ? "Passwords do not match" 
+        : "",
+  };
+
+  setErrors(newErrors);
+  return Object.values(newErrors).every((e) => e === "");
+};
+
+const handleSubmit = () => {
+  if (!validate()) return;
+  // proceed with signup
+};
   return (
     <Onboarding>
-      <div>
+      <div className="w-full"> 
          <Step steps={steps} currentStep={currentStep} />
          <hr className="border-[#E5E7EB] w-full " />
-      <div className="account-setup-general-wrap">
+      <div className="mt-30 w-full max-w-200 mx-auto">
        
-        <div className="account-setup-inner-wrap">
           <div className="account-setup-header-wrap">
             <p className="account-setup-header-text">Create Your Account</p>
             <p className="account-setup-body-text">
@@ -72,15 +126,28 @@ const SignUp = () => {
               <Input
                 label="Full name"
                 placeholder="Ex. Amara Johnson"
+                 onChange={
+                  (e) =>
+                    {
+                      setFullName(e.target.value)
+                      if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: "" }));
+                    }
+                
+                }
                 required
+                error={errors.fullName}
               />
               <Select
-                label="Job Title"
+                label="Select your role"
                 placeholder="Select your role"
                 required
-                onChange={(value) => setRole(value)}
+                onChange={(value) => {
+                  setRole(value)
+                  if (errors.role) setErrors((prev) => ({ ...prev, role: "" }));
+                }}
                 options={options}
                 value={role}
+                error={errors.role}  
               />
             </div>
             <div>
@@ -89,7 +156,14 @@ const SignUp = () => {
                 placeholder="Ex. amara@hospital.com"
                 required
                 type="email"
+                 error={errors.email}
                 hint="Use the email you want to receive notifications and billing information on"
+                onChange={(e) => 
+                {
+                  setEmail(e.target.value)
+                  if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+                }}
+                
               />
             </div>
 
@@ -99,16 +173,29 @@ const SignUp = () => {
                 placeholder="At least 8 characters"
                 required
                 type="password"
+                showStrength 
+                 error={errors.password}
+                onChange={(e) => 
+                {
+                  setPassword(e.target.value)
+                if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
+                }}
               />
               <Input
                 label="Confirm password"
                 placeholder="Re-enter your password"
                 required
                 type="password"
+                
+                error={errors.confirmPassword} 
+                onChange={(e) => {setConfirmPassword(e.target.value)
+                  if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: "" }));
+                }}
+               
               />
             </div>
             <div className="setup-button-wrap">
-              <Button label="Get Started" variant="primary" />
+              <Button label="Create Account" variant="primary"   onClick={handleSubmit}   filled={isFormFilled} />
             </div>
             <div className="login-link-wrap">
               <p className="link-text">
@@ -129,7 +216,7 @@ const SignUp = () => {
               </p>
             </div>
           </div>
-        </div>
+       
       </div>
       </div>
     </Onboarding>

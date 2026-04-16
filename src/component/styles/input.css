@@ -3,10 +3,11 @@
   flex-direction: column;
   gap: 0.6rem;
   width: 100%;
+  
 }
 .input-wrapper .input-label {
   font-size: 1.4rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #333;
 }
 .input-wrapper .input-required {
@@ -15,9 +16,9 @@
 .input-wrapper .input-container {
   display: flex;
   align-items: center;
-  border: 1px solid #d1d5db;
+  border: 1px solid #94A3B8;
   border-radius: 8px;
-  padding: 1rem 1.2rem;
+  padding: 1rem 2rem;
   background: #fff;
   transition: border-color 0.2s ease;
 }
@@ -26,6 +27,8 @@
 }
 .input-wrapper .input-container--error {
   border-color: #e74c3c;
+  background-color: #FFF1F4;
+  
 }
 .input-wrapper .input-container--error:focus-within {
   border-color: #e74c3c;
@@ -33,13 +36,16 @@
 .input-wrapper .input-container .input-field {
   border: none;
   outline: none;
-  width: 100%;
   font-size: 14px;
   background: transparent;
   color: #111;
+  caret-color: #7c3aed; 
+    flex: 1; 
+
 }
 .input-wrapper .input-container .input-field::-moz-placeholder {
   color: #9ca3af;
+  font-size: 12px;
 }
 .input-wrapper .input-container .input-field::placeholder {
   color: #9ca3af;
@@ -52,20 +58,30 @@
   color: #9ca3af;
   display: flex;
   align-items: center;
+  justify-content:center;
+  width: 16px;
+  height: 16px;
 }
 .input-wrapper .input-container .input-icon:hover {
   color: #333;
 }
 .input-wrapper .input-error {
   font-size: 12px;
-  color: #e74c3c;
+  color: #CA2044;
   margin: 0;
+  font-weight: 500;
+  height: 10px;
+ 
 }
 .input-wrapper .input-hint {
   font-size: 12px;
   color: #6b7280;
   margin: 0;
+  font-weight: 500;
+
 }
+
+
 
 .select-arrow {
   color: #9ca3af;
@@ -111,3 +127,31 @@
   color: #7c3aed;
   font-weight: 500;
 }/*# sourceMappingURL=input.css.map */
+
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.strength-segments {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.strength-segment {
+  height: 4px;
+  flex: 1;
+  border-radius: 99px;
+  transition: background-color 0.3s ease;
+}
+
+.strength-label {
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 40px;
+  text-align: right;
+  transition: color 0.3s ease;
+}
