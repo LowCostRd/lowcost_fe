@@ -9,15 +9,14 @@
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
-  flex: 0 0 45%;
+  flex: 0 0 47%;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-logo-box {
   display: flex;
-  padding: 3rem 2rem 2rem 3rem;
+  padding: 2rem 3rem;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-logo-box img {
-  width: 13rem;
-  height: 2.5rem;
+  width: 10rem;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box {
   display: flex;
@@ -26,27 +25,27 @@
   justify-content: center;
   padding: 2rem;
   gap: 4rem;
-  margin-top: auto;
-  margin-bottom: auto;
+  margin-top: 4rem;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top .top-content-header-text {
-  font-size: 40px;
+  font-size: 3.8rem;
   font-weight: 600;
   color: #1f2937;
-  line-height: 4rem;
+  line-height: 3rem;
+  letter-spacing: 1px;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top .top-content-header-text .top-content-highlight {
   color: #5b0aff;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top .top-content-body-text {
   color: #6b7280;
-  font-size: 1.5rem;
+  font-size: 17px;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-bottom {
   background-image: url("../../assets/onboarding/Group (10).png");
@@ -65,6 +64,20 @@
   font-size: 1.4rem;
   font-weight: 600;
   transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.btn .btn__icon {
+  width: 2rem;
+  height: 2rem;
+}
+.btn .btn__icon .img-box {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .btn:disabled {
   opacity: 0.5;
@@ -73,13 +86,23 @@
 .btn--secondary {
   background-color: #e0e0e0;
   color: #333;
+  font-weight: 600;
 }
 .btn--secondary:hover {
   opacity: 0.9;
 }
+.btn--grey {
+  background-color: #f7f6fa;
+  color: #6b7280;
+  font-weight: 600;
+}
+.btn--grey:hover {
+  opacity: 0.9;
+}
 .btn--primary {
-  background-color: #7C3AED;
+  background-color: #7c3aed;
   color: #fff;
+  font-weight: 600;
 }
 .btn--primary:hover {
   opacity: 0.9;
@@ -87,7 +110,59 @@
 .btn--danger {
   background-color: #e74c3c;
   color: #fff;
+  font-weight: 600;
 }
 .btn--danger:hover {
   opacity: 0.9;
+}
+
+.upload-box-wrap {
+  border: 0.15rem dashed #cbd5e1;
+  border-radius: 1.2rem;
+  padding: 3.2rem;
+  text-align: center;
+  cursor: pointer;
+  background: #f9fafb;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.upload-box-wrap:hover {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+}
+.upload-box-wrap--error {
+  border-color: red;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.upload-icon {
+  width: 4rem;
+  height: 4rem;
+  background-color: #ffffff;
+  border-radius: 50%;
+}
+.upload-icon .img-box {
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload-icon .img-box svg {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
+.upload-link {
+  color: #7c3aed;
+  font-weight: 500;
+  font-size: 1.4rem;
 }/*# sourceMappingURL=style.css.map */
