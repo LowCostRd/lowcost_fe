@@ -100,6 +100,11 @@ const Icons = {
       d="M10 13.333a3.333 3.333 0 1 0 0-6.666 3.333 3.333 0 0 0 0 6.666z"
     ></path>
   </svg>
+),
+SpinningIcon : (
+  <span className="flex items-center justify-center">
+      <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+    </span>
 )
 };
 export default Icons;

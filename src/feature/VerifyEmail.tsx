@@ -4,14 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import shieldTick from "../assets/onboarding/shield-tick.png";
 import { Link } from "react-router-dom";
 import arrLeft from "../assets/general/arrow-left.png";
+import type { StepConfig } from "../type/general";
+import { INITIAL_SECONDS } from "../constant/general";
+import { useLocation } from "react-router-dom";
 
-interface StepConfig {
-  id: number;
-  label: string;
-}
 
-const INITIAL_SECONDS = 600;
-const email = "dummy@gmail.com";
+
 
 const VerifyEmail = () => {
   const STEPS: StepConfig[] = [
@@ -27,6 +25,9 @@ const VerifyEmail = () => {
   const [expired, setExpired] = useState(false);
   const [wrong, setWrong] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const location = useLocation();
+  const email = location.state?.email || "";
 
   useEffect(() => {
     if (expired || seconds <= 0) return;

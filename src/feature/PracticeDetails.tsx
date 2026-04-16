@@ -3,11 +3,9 @@ import Onboarding from "../component/Onboarding";
 import PractitionerDropdown from "../component/PractitionerDropdown";
 import Step from "../component/Step";
 import arrLeft from "../assets/general/arrow-left.png";
+import type { StepConfig } from "../type/general";
 
-interface StepConfig {
-  id: number;
-  label: string;
-}
+
 
 const INSURANCE_PLANS = [
   "Aetna",

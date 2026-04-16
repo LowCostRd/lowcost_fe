@@ -1,18 +1,8 @@
 import { useState } from "react";
 import icons from "../assets/Icons";
 import "./styles/input.css";
+import type { InputProps } from "../type/general";
 
-interface InputProps {
-  label?: string;
-  placeholder?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: "text" | "email" | "password";
-  error?: string;
-  hint?: string;
-  required?: boolean;
-  showStrength?: boolean;
-}
 
 const passwordRules = [
   { label: "One lowercase letter (e.g. a)", test: (p: string) => /[a-z]/.test(p) },

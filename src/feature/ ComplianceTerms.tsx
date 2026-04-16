@@ -7,26 +7,14 @@ import hospitalIcon from "../assets/onboarding/hospital.png";
 import documentIcon from "../assets/onboarding/document-text.png";
 import shieldIcon from "../assets/onboarding/shield-security.png";
 import editIcon from "../assets/onboarding/edit-2.png";
+import type { Agreement, StepConfig } from "../type/general";
 
-interface StepConfig {
-  id: number;
-  label: string;
-}
 
-interface Agreement {
-  id: string;
-  icon: string | React.ReactNode;
-  title: string;
-  badge: string;
-  badgeColor: "orange" | "purple";
-  description: string;
-  link?: { label: string; href: string };
-}
 
 const AGREEMENTS: Agreement[] = [
   {
     id: "hipaa",
-    icon: hospitalIcon,           // changed to string path
+    icon: hospitalIcon,           
     title: "HIPAA Business Associate Agreement (BAA)",
     badge: "Required",
     badgeColor: "orange",

@@ -1,6 +1,6 @@
 import "./styles/style.css";
 interface ButtonProps {
-  label: string;
+  label: React.ReactNode;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   variant?: "primary" | "secondary" | "danger";
