@@ -1,5 +1,6 @@
 import ComplianceTerms from "../feature/ ComplianceTerms";
 import PracticeDetails from "../feature/PracticeDetails";
+import PracticeIdentity from "../feature/PracticeIdentity";
 import SignUp from "../feature/SignUp";
 
 import VerifyEmail from "../feature/VerifyEmail";
@@ -14,11 +15,16 @@ export const Route = [
         element : <VerifyEmail/>
     },
     {
+        path: "/practice-identity",
+        element : <PracticeIdentity/>
+    },
+    {
         path: "/practice-details",
         element : <PracticeDetails/>
     },
     {
         path: "/compliance-terms",
         element : <ComplianceTerms/>
-    }
+    },
+
 ]

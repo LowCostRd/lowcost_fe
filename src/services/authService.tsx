@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import type { RegisterHandlerProps, VerifyEmailHandlerProps } from "../type/auth";
+import type { RegisterHandlerProps, VerifyEmailHandlerProps,ResendOtpHandlerProps } from "../type/auth";
 
 
 
@@ -73,4 +73,10 @@ export const handleEmailVerification = async ({
       style: { fontSize: "16px" },
     });
   }
+};
+export const handleResendOtp = async ({
+  data,
+  resendOtp,
+}: ResendOtpHandlerProps) => {
+  await resendOtp(data); 
 };

@@ -7,9 +7,10 @@ import arrLeft from "../assets/general/arrow-left.png";
 import type { StepConfig } from "../type/general";
 import { INITIAL_SECONDS } from "../constant/general";
 import { ToastContainer } from "react-toastify";
-import { handleEmailVerification } from "../services/authService";
+import { handleEmailVerification, handleResendOtp } from "../services/authService";
 import { useAuthStore } from "../store/AuthStore";
 import Icons from "../assets/Icons";
+import { toast } from "react-toastify";
 
 const VerifyEmail = () => {
   const STEPS: StepConfig[] = [
@@ -25,6 +26,7 @@ const VerifyEmail = () => {
   const [isExpired, setIsExpired] = useState(false);
   const [error, setError] = useState<string>(""); 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const location = useLocation();
@@ -32,6 +34,7 @@ const VerifyEmail = () => {
   const email = location.state?.email || "";
 
   const { verifyEmail, isLoading: storeLoading } = useAuthStore();
+    const { resendOtp } = useAuthStore();
 
   // Timer
   useEffect(() => {
@@ -62,7 +65,7 @@ const VerifyEmail = () => {
     ? "Code expired"
     : `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
-  // Handle OTP input change
+
   const handleChange = (value: string, index: number) => {
     const digit = value.replace(/\D/g, "").slice(-1); 
     if (digit === otp[index]) return; 
@@ -77,10 +80,11 @@ const VerifyEmail = () => {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Auto-submit when all 6 digits are filled
-    if (index === 5 && digit && newOtp.every((d) => d !== "")) {
-      handleSubmit(newOtp.join(""));
-    }
+ if (index === 5 && digit && newOtp.every((d) => d !== "")) {
+  if (!isResending) { 
+    handleSubmit(newOtp.join(""));
+  }
+}
   };
 
   // Handle backspace
@@ -115,25 +119,52 @@ const VerifyEmail = () => {
     const lastIndex = Math.min(digits.length - 1, 5);
     inputRefs.current[lastIndex]?.focus();
 
-    // Auto submit if complete
+  
     if (digits.length === 6) {
       handleSubmit(digits);
     }
   };
 
-  const handleResend = useCallback(async () => {
-    // TODO: Call your actual resend OTP API here
-    // Example: await resendEmailCode(email);
+const handleResend = useCallback(async () => {
+  if (isResending) return;
+  setIsResending(true);
 
+const toastId = toast.loading("Resending verification code...", {
+  style: { fontSize: "14px" },
+});
+
+  try {
+    await handleResendOtp({ data: { email_address: email }, resendOtp });
+
+    toast.update(toastId, {
+      render: "Code resent successfully!",
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+      style: { fontSize: "14px" },
+    });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Failed to resend code. Please try again.";
+
+    toast.update(toastId, {
+      render: message,
+      type: "error",
+      isLoading: false,
+      autoClose: 3000,
+       style: { fontSize: "14px" },
+    });
+  } finally {
     setOtp(Array(6).fill(""));
     setSeconds(INITIAL_SECONDS);
     setIsExpired(false);
     setError("");
     inputRefs.current[0]?.focus();
+    setIsResending(false);
+  }
+}, [email, resendOtp, isResending]);
 
-    // Optional: show toast
-    // toast.success("New code sent to your email");
-  }, [email]);
+
 
   const isOtpComplete = otp.every((digit) => digit !== "");
 
@@ -229,18 +260,18 @@ const VerifyEmail = () => {
           {/* Resend */}
           <p className="text-[14px] text-[#6B7280] mb-12">
             Didn't receive the code?{" "}
-            <button
+           <button
               onClick={handleResend}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isResending} 
               className="text-[#5B0AFF] font-medium hover:underline disabled:opacity-50 cursor-pointer"
             >
-              Click to Resend
+              {isResending ? "Resending..." : "Click to Resend"}
             </button>
           </p>
 
           {/* Info Box */}
           <div className="bg-[#F7F6FA] rounded-lg px-6 py-8 flex gap-4 mb-18">
-            <img src={shieldTick} alt="Security" className="w-8 h-8 flex-shrink-0" />
+            <img src={shieldTick} alt="Security" className="w-8 h-8 shrink-0" />
             <div>
               <h4 className="text-[15px] font-medium text-[#1F2937] mb-1">
                 Why we verify your email
@@ -263,7 +294,7 @@ const VerifyEmail = () => {
                 }
                 text-[#F5F3FF]`}
             >
-              {isSubmitting || storeLoading ? Icons.SpinningIcon : "Verify & Continue"}
+              {isSubmitting  ? Icons.SpinningIcon : "Verify & Continue"}
             </button>
 
           

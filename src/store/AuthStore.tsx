@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { create } from "zustand";
-import type { AuthState, RegisterPayload, VerifyEmailPayload } from "../type/auth";
+import type { AuthState, RegisterPayload, ResendOtpPayload, VerifyEmailPayload } from "../type/auth";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -49,6 +49,19 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
   
+
+
+    resendOtp: async (data: ResendOtpPayload) => {
+    set({ isLoading: true });
+    try {
+      await axios.patch(`${BASE_URL}/v1/api/resend_otp`, data);
+      set({ isLoading: false });
+      return true;
+    } catch (error) {
+      set({ isLoading: false });
+      throw new Error(handleApiError(error, "Failed to resend OTP. Please try again."));
+    }
+  },
 
 
 
