@@ -1,9 +1,29 @@
+import usaIcon from "../assets/onboarding/flag/usa.svg";
+import australiaIcon from "../assets/onboarding/flag/australia.svg";
+import brazilIcon from "../assets/onboarding/flag/brazil.svg";
+import canadaIcon from "../assets/onboarding/flag/canada.svg";
+import franceIcon from "../assets/onboarding/flag/france.svg";
+import germanyIcon from "../assets/onboarding/flag/germany.svg";
+import irelandIcon from "../assets/onboarding/flag/ireland.svg";
+import japanIcon from "../assets/onboarding/flag/japan.svg";
+import netherlandsIcon from "../assets/onboarding/flag/netherland.svg";
+import newZealandIcon from "../assets/onboarding/flag/newzeeland.svg";
+import saudiIcon from "../assets/onboarding/flag/saudi.svg";
+import singaporeIcon from "../assets/onboarding/flag/singapor.svg";
+import southafricaIcon from "../assets/onboarding/flag/southafrica.svg";
+import switzerlandIcon from "../assets/onboarding/flag/switzerland.svg";
+import uaeIcon from "../assets/onboarding/flag/uae.svg";
+import ukIcon from "../assets/onboarding/flag/uk.svg";
+import deleteIcon from "../assets/general//trash (1).svg";
+import downloadIcon from "../assets/general/Upload.svg";
+
+
 const Icons = {
   google: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="20"
+      height="20"
       fill="none"
       viewBox="0 0 24 24"
     >
@@ -35,8 +55,8 @@ const Icons = {
   microsoft: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="20"
+      height="20"
       fill="none"
       viewBox="0 0 24 24"
     >
@@ -77,5 +97,52 @@ const Icons = {
       ></path>
     </svg>
   ),
+  openEye: (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    fill="none"
+    viewBox="0 0 20 20"
+  >
+    <path
+      stroke="#9498B8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M10 3.333c-2.942 0-5.683 1.734-7.592 4.734-.75 1.175-.75 3.15 0 4.325C4.317 15.392 7.058 17.126 10 17.126c2.942 0 5.683-1.734 7.592-4.734.75-1.175.75-3.15 0-4.325C15.683 5.067 12.942 3.333 10 3.333z"
+    ></path>
+    <path
+      stroke="#9498B8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M10 13.333a3.333 3.333 0 1 0 0-6.666 3.333 3.333 0 0 0 0 6.666z"
+    ></path>
+  </svg>
+),
+SpinningIcon : (
+  <span className="flex items-center justify-center">
+      <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+    </span>
+),
+usaIcon : usaIcon,
+australiaIcon  : australiaIcon,
+canadaIcon : canadaIcon,
+brazilIcon : brazilIcon,
+franceIcon : franceIcon,
+germanyIcon : germanyIcon,
+irelandIcon : irelandIcon,
+japanIcon : japanIcon,
+netherlandsIcon : netherlandsIcon,
+newZealandIcon : newZealandIcon,
+saudiIcon : saudiIcon,
+singaporeIcon : singaporeIcon,
+southafricaIcon : southafricaIcon,
+switzerlandIcon : switzerlandIcon,
+uaeIcon : uaeIcon,
+ukIcon : ukIcon,
+deleteIcon : deleteIcon,
+uploadIcon : downloadIcon
 };
 export default Icons;

@@ -12,13 +12,12 @@ const Onboarding = ({ children }: OnboardingProps) => {
         </div>
         <div className="onboarding-content-box">
           <div className="onboarding-content-top">
-            <p className="top-content-header-text">
+            <p className="flex flex-col text-[36px] font-semibold leading-16" >
               Every Patient Call Answered,
+              <span>       Every Time,{" "}
+              <span className="text-[#5b0aff]">Automatically</span></span>
             </p>
-            <p className="top-content-header-text">
-              Every Time,{" "}
-              <span className="top-content-highlight">Automatically</span>
-            </p>
+         
             <p className="top-content-body-text">
               Conversa answers, books, and handles patient calls around the
               clock.
