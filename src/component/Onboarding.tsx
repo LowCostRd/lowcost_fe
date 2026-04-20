@@ -26,7 +26,9 @@ const Onboarding = ({ children }: OnboardingProps) => {
           <div className="onboarding-content-bottom"></div>
         </div>
       </div>
+       <div className="onboarding-scroll-container">
       {children}
+      </div>
     </div>
   );
 };

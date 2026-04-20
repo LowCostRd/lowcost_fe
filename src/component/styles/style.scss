@@ -1,7 +1,8 @@
 .onboarding-wrapper {
   display: flex;
-
   min-height: 100vh;
+   height: 100vh;
+  overflow: hidden;
   .onboarding-box-wrapper {
     background-image: url("../../assets/onboarding/bg.png");
     background-size: cover;
@@ -10,8 +11,12 @@
     display: flex;
     flex-direction: column;
     flex: 0 0 47%;
-    
-
+     position: sticky; 
+    top: 0;           
+    height: 100vh;    
+   overflow-y: auto;     
+   overflow-x: hidden;    
+   flex-shrink: 0;
     
     .onboarding-content-box {
       display: flex;
@@ -85,4 +90,10 @@
 .btn--unfilled {
   background-color: #9B6AFF;
   cursor: pointer; 
+}
+
+.onboarding-scroll-container {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
 }

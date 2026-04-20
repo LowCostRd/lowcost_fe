@@ -19,11 +19,8 @@ const COUNTRIES = [
   { name: "Japan", flag: Icons.japanIcon },
   { name: "Netherlands", flag: Icons.netherlandsIcon },
   { name: "New Zealand", flag: Icons.newZealandIcon },
-  // { name: "Saudi Arabia", flag: Icons.saudiIcon },
-  // { name: "Singapore", flag: Icons.singaporeIcon },
   { name: "South Africa", flag: Icons.southafricaIcon },
   { name: "Switzerland", flag: Icons.switzerlandIcon },
-  // { name: "United Arab Emirates", flag: Icons.uaeIcon },
   { name: "United States", flag: Icons.usaIcon },
   { name: "United Kingdom", flag: Icons.ukIcon },
   { name: "Other", flag: "" },
@@ -32,7 +29,7 @@ const COUNTRIES = [
 const COUNTRY_TO_ISO: Record<string, string> = {
   "Australia": "AU", "Brazil": "BR", "Canada": "CA", "France": "FR",
   "Germany": "DE", "Ireland": "IE", "Japan": "JP", "Netherlands": "NL",
-  "New Zealand": "NZ","South Africa": "ZA", "Switzerland": "CH", 
+  "New Zealand": "NZ", "South Africa": "ZA", "Switzerland": "CH",
   "United States": "US", "United Kingdom": "GB", "Other": "",
 };
 
@@ -51,35 +48,29 @@ const PracticeIdentity = () => {
   const [stateValue, setStateValue] = useState("");
   const [logo, setLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
-  const [errors, setErrors] = useState({ 
-    name: false, 
-    regNumber: false, 
-    country: false, 
-    state: false 
+  const [errors, setErrors] = useState({
+    name: false,
+    regNumber: false,
+    country: false,
+    state: false,
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Dynamic states list
   const isoCode = COUNTRY_TO_ISO[country] || "";
   const statesList = isoCode
     ? State.getStatesOfCountry(isoCode).map((s) => s.name).sort()
     : [];
 
- const handleFileChange = (file: File | null) => {
-  if (!file) return;
+  const handleFileChange = (file: File | null) => {
+    if (!file) return;
+    setLogo(file);
+    const reader = new FileReader();
+    reader.onload = (e) => setLogoPreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
-  setLogo(file);
-
-  const reader = new FileReader();
-  reader.onload = (e) => setLogoPreview(e.target?.result as string);
-  reader.readAsDataURL(file);
-
-
-  if (fileInputRef.current) {
-    fileInputRef.current.value = "";
-  }
-};
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -101,7 +92,7 @@ const PracticeIdentity = () => {
     }
   };
 
-  const isFormComplete = 
+  const isFormComplete =
     name.trim() !== "" &&
     regNumber.trim() !== "" &&
     country !== "" &&
@@ -111,11 +102,10 @@ const PracticeIdentity = () => {
     <div>
       <Onboarding>
         <div className="w-full">
-           <div className="sticky top-0 z-50">
-          <Step steps={STEPS} currentStep={3} />
-          <hr className="border-gray-200 w-full" />
+          <div className="sticky top-0 z-50">
+            <Step steps={STEPS} currentStep={3} />
+            <hr className="border-gray-200 w-full" />
           </div>
-          
 
           <div className="mt-30 w-full max-w-180.5 mx-auto">
             <h1 className="font-semibold text-[28px] text-[#1F2937] mb-3" style={{ letterSpacing: 1 }}>
@@ -171,73 +161,63 @@ const PracticeIdentity = () => {
               )}
             </div>
 
-                {/* Country & State - Fixed Alignment */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  {/* Country Select */}
-                  <Select
-                    label="Country"
-                    value={country}
-                    onChange={(val) => {
-                      setCountry(val);
-                      setStateValue(""); 
-                      setErrors((p) => ({ ...p, country: false, state: false }));
-                    }}
-                    options={COUNTRIES.map(c => ({
-                      label: c.name,
-                      value: c.name,
-                      flag: c.flag || undefined,
-                    }))}
-                    placeholder="Select country"
-                    error={errors.country ? "Please select a country" : undefined}
-                    required
-                  />
+            {/* Country & State */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              {/* Country Select */}
+              <Select
+                label="Country"
+                value={country}
+                onChange={(val) => {
+                  setCountry(val);
+                  setStateValue("");
+                  setErrors((p) => ({ ...p, country: false, state: false }));
+                }}
+                options={COUNTRIES.map((c) => ({
+                  label: c.name,
+                  value: c.name,
+                  flag: c.flag || undefined,
+                }))}
+                placeholder="Select country"
+                error={errors.country ? "Please select a country" : undefined}
+                required
+              />
 
-                  {/* State / City Field - Use Select consistently */}
-                  <Select
-                    label="City / State "
+              {/* City / State — swaps to text input when "Other" is selected */}
+              {country === "Other" ? (
+                <div>
+                  <label className="block text-[14px] font-semibold text-[#1F2937] mb-2">
+                    City / State <span className="text-[#1F2937]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter city / state"
                     value={stateValue}
-                    onChange={(val) => {
-                      setStateValue(val);
-                      setErrors((p) => ({ ...p, state: false }));
+                    onChange={(e) => {
+                      setStateValue(e.target.value);
+                      if (errors.state) setErrors((p) => ({ ...p, state: false }));
                     }}
-                    options={
-                      country === "Other"
-                        ? [] // or handle differently
-                        : statesList.map(s => ({ label: s, value: s }))
-                    }
-                    placeholder={country ? "Select city / state" : "Select country first"}
-                    error={errors.state ? 
-                      (country === "Other" ? "Please enter a city / state" : "Please select a city / state") 
-                      : undefined
-                    }
-                    required
-                    
-                    // optional: disable until country is selected
+                    className={`w-full h-16 px-5 border rounded-lg text-[14px] text-[#1F2937] placeholder-[#9498B8] outline-none transition focus-within:border-[#5B0AFF] caret-[#5B0AFF]
+                      ${errors.state ? "border-[#CA2044] bg-[#FFF1F4]" : "border-[#94A3B8]"}`}
                   />
-
-                  {/* Fallback input for "Other" - shown separately if needed */}
-                  {country === "Other" && (
-                    <div className="col-span-2"> {/* or keep in second column if preferred */}
-                      <label className="block text-[14px] font-semibold text-[#1F2937] mb-3">
-                        City / State 
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Enter city / state"
-                        value={stateValue}
-                        onChange={(e) => {
-                          setStateValue(e.target.value);
-                          if (errors.state) setErrors((p) => ({ ...p, state: false }));
-                        }}
-                        className={`w-full h-16 px-5 border rounded-lg text-[14px] text-[#1F2937] placeholder-[#9498B8] outline-none transition
-                          ${errors.state ? "border-[#CA2044] bg-[#FFF1F4]" : "border-[#94A3B8]"}`}
-                      />
-                      {errors.state && (
-                        <p className="text-[13px] text-[#CA2044] mt-1">Please enter a city / state</p>
-                      )}
-                    </div>
+                  {errors.state && (
+                    <p className="text-[13px] text-[#CA2044] mt-1">Please enter a city / state</p>
                   )}
                 </div>
+              ) : (
+                <Select
+                  label="City / State"
+                  value={stateValue}
+                  onChange={(val) => {
+                    setStateValue(val);
+                    setErrors((p) => ({ ...p, state: false }));
+                  }}
+                  options={statesList.map((s) => ({ label: s, value: s }))}
+                  placeholder={country ? "Select city / state" : "Select country first"}
+                  error={errors.state ? "Please select a city / state" : undefined}
+                  required
+                />
+              )}
+            </div>
 
             {/* Practice logo */}
             <div className="mb-8">
@@ -259,23 +239,18 @@ const PracticeIdentity = () => {
                       <p className="text-[12px] text-[#6B7280]">File size: {Math.round(logo.size / 1024)}kb</p>
                     </div>
                   </div>
-             
-
                   <button
-                      type="button"
-                      onClick={() => {
-                        setLogo(null);
-                        setLogoPreview("");
-                        if (fileInputRef.current) {
-                          fileInputRef.current.value = ""; 
-                        }
-                      }}
-                      className="flex items-center gap-1 text-[#CA2044] text-[14px] font-medium cursor-pointer"
-                    >
-
-                          <img src={Icons.deleteIcon} alt="Delete" className="w-5 h-5" />
-                          Delete
-                   </button>
+                    type="button"
+                    onClick={() => {
+                      setLogo(null);
+                      setLogoPreview("");
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                    className="flex items-center gap-1 text-[#CA2044] text-[14px] font-medium cursor-pointer"
+                  >
+                    <img src={Icons.deleteIcon} alt="Delete" className="w-5 h-5" />
+                    Delete
+                  </button>
                 </div>
               ) : (
                 <div
