@@ -1,3 +1,5 @@
+import type { NavigateFunction } from "react-router-dom";
+
 export interface AuthState {
   isLoading: boolean;
   register: (data: RegisterPayload) => Promise<boolean>;
@@ -6,18 +8,17 @@ export interface AuthState {
 }
 
 
-
 export interface RegisterHandlerProps {
   data: RegisterPayload;
   register: (data: RegisterPayload) => Promise<boolean>;
-  navigate: (path: string, options?: unknown) => void;
+  navigate: NavigateFunction;
 }
 
 
 export interface VerifyEmailHandlerProps {
   data: VerifyEmailPayload;
   verifyEmail: (data: VerifyEmailPayload) => Promise<boolean>;
-  navigate: (path: string, options?: unknown) => void;
+  navigate: NavigateFunction;
 }
 
 export interface ResendOtpHandlerProps {
