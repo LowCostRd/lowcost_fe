@@ -7,26 +7,14 @@ import hospitalIcon from "../assets/onboarding/hospital.png";
 import documentIcon from "../assets/onboarding/document-text.png";
 import shieldIcon from "../assets/onboarding/shield-security.png";
 import editIcon from "../assets/onboarding/edit-2.png";
+import type { Agreement, StepConfig } from "../type/general";
 
-interface StepConfig {
-  id: number;
-  label: string;
-}
 
-interface Agreement {
-  id: string;
-  icon: string | React.ReactNode;
-  title: string;
-  badge: string;
-  badgeColor: "orange" | "purple";
-  description: string;
-  link?: { label: string; href: string };
-}
 
 const AGREEMENTS: Agreement[] = [
   {
     id: "hipaa",
-    icon: hospitalIcon,           // changed to string path
+    icon: hospitalIcon,           
     title: "HIPAA Business Associate Agreement (BAA)",
     badge: "Required",
     badgeColor: "orange",
@@ -92,10 +80,12 @@ const ComplianceTerms = () => {
   return (
     <Onboarding>
       <div className="w-full">
+         <div className="sticky top-0 z-50">
         <Step steps={STEPS} currentStep={5} />
-        <hr className="border-[#E5E7EB] w-full mt-6" />
+        <hr className="border-[#E5E7EB] w-full" />
+        </div>
 
-        <div className="mt-36 w-full max-w-180.5 mx-auto">
+        <div className="mt-27 w-full max-w-197 mx-auto">
           <h1 className="font-semibold text-[30px] text-[#1F2937] mb-3 tracking-[0.5px]">
             Compliance & Agreements
           </h1>
@@ -199,10 +189,10 @@ const ComplianceTerms = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 mb-10">
-            <Link to="/">
+            <Link to="/practice-details">
               <button
                 type="button"
-                className="flex items-center justify-center gap-2 h-18.5 text-[14px] px-6 border border-gray-300 rounded-xl text-sm font-medium text-[#6B7280] bg-white hover:bg-gray-50 transition w-full sm:w-auto"
+                className="flex items-center justify-center gap-2 h-16.5 text-[14px] px-6 rounded-lg outline-none cursor-pointer font-semibold text-[#6B7280]  bg-[#F7F6FA] w-full sm:w-auto"
               >
                 <img src={arrLeft} alt="" className="w-7 h-7" />
                 Go Back
@@ -212,10 +202,10 @@ const ComplianceTerms = () => {
             <button
               type="button"
               disabled={!allChecked}
-              className={`flex-1 h-18.5 text-white font-semibold rounded-xl text-[14px] transition
+              className={`flex-1 h-16.5 text-white font-semibold rounded-lg text-[14px] transition
                 ${allChecked 
-                  ? "bg-[#5B0AFF] hover:bg-[#4C0CE6]" 
-                  : "bg-[#7C3AED] opacity-75 cursor-not-allowed"
+                  ? "bg-[#5B0AFF] cursor-pointer" 
+                  : "bg-[#9B6AFF] opacity-75 cursor-not-allowed"
                 }`}
             >
               Confirm & Activate Account
