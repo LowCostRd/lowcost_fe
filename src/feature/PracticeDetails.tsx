@@ -4,6 +4,7 @@ import PractitionerDropdown from "../component/PractitionerDropdown";
 import Step from "../component/Step";
 import arrLeft from "../assets/general/arrow-left.png";
 import type { StepConfig } from "../type/general";
+import { Link } from "react-router";
 
 
 
@@ -80,8 +81,11 @@ const PracticeDetails = () => {
     <div>
       <Onboarding>
         <div className="w-full">
+
+          <div className="sticky top-0 z-50">
           <Step steps={STEPS} currentStep={4} />
           <hr className="border-gray-200 w-full" />
+          </div>
 
           <div className="mt-30 w-full max-w-180.5 mx-auto">
             <h1
@@ -109,7 +113,7 @@ const PracticeDetails = () => {
                     if (errors.phone)
                       setErrors((prev) => ({ ...prev, phone: false }));
                   }}
-                  className={`w-full  h-16 px-8 border rounded-lg text-[14px] text-[#1F2937] placeholder-[#9498B8] outline-none transition
+                  className={`w-full  h-16 px-8 border rounded-lg text-[14px] text-[#1F2937] focus-within:border-[#7c3aed] caret-[#7c3aed] placeholder-[#9498B8] outline-none transition
                     ${
                       errors.phone
                         ? "border-[#CA2044] bg-[#FFF1F4]"
@@ -137,7 +141,7 @@ const PracticeDetails = () => {
                   placeholder="Ex. www.hospital.com"
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
-                  className="w-full h-16 px-8 border border-[#94A3B8] rounded-lg text-[14px] text-[#1F2937] placeholder-[#9498B8] outline-none"
+                  className="w-full h-16 px-8 border border-[#94A3B8] rounded-lg text-[14px] text-[#1F2937] focus-within:border-[#7c3aed] caret-[#7c3aed] placeholder-[#9498B8] outline-none"
                 />
               </div>
             </div>
@@ -197,14 +201,16 @@ const PracticeDetails = () => {
 
             {/* Actions */}
             <div className="flex gap-3">
+               <Link to="/practice-identity">
               <button className="flex items-center gap-2 h-16.5 px-8 outline-none bg-[#F7F6FA] rounded-lg text-[14px] font-semibold text-[#6B7280] cursor-pointer">
               <img src={arrLeft} alt="" className="w-7 h-7" />
               Go back
             </button>
+            </Link>
              <button
               onClick={handleContinue}
               className={`flex-1 h-16.5 text-white font-semibold rounded-lg text-[14px] w-100.5  cursor-pointer
-                ${isFormComplete ? "bg-[#5B0AFF]" : "bg-[#7C3AED]"}`}
+                ${isFormComplete ? "bg-[#5B0AFF]" : "bg-[#9B6AFF]"}`}
             >
               Continue
             </button>

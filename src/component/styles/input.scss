@@ -18,9 +18,10 @@
     display: flex;
     align-items: center;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
+    border-radius: 5px;
     padding: 1rem 2rem;
     background: #fff;
+    height: 4rem;
     transition: border-color 0.2s ease;
 
     &:focus-within {

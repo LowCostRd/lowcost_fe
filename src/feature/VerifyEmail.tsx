@@ -181,6 +181,7 @@ const toastId = toast.loading("Resending verification code...", {
           email_address: email,
           otp: code,
         },
+        
         verifyEmail,
         navigate,
       });
@@ -201,8 +202,10 @@ const toastId = toast.loading("Resending verification code...", {
     <Onboarding>
       <ToastContainer />
       <div className="w-full">
+         <div className="sticky top-0 z-50">
         <Step steps={STEPS} currentStep={2} />
         <hr className="border-[#E5E7EB] w-full" />
+        </div>
 
         <div className="mt-34 w-full max-w-180.5 mx-auto">
           <h1 className="font-semibold leading-6 text-[28px] text-[#1F2937] mb-6" style={{ letterSpacing: 1 }}>
@@ -229,7 +232,7 @@ const toastId = toast.loading("Resending verification code...", {
               onChange={(e) => handleChange(e.target.value, i)}
               onKeyDown={(e) => handleKeyDown(e, i)}
               onPaste={handlePaste}
-              className={`w-16.5 h-16.5 border rounded-lg text-center text-xl font-semibold caret-transparent focus:outline-none transition-all
+              className={`w-16.5 h-16.5 border rounded-lg text-center text-xl font-semibold focus-within:border-[#5B0AFF] caret-[#5B0AFF] focus:outline-none transition-all
                 ${error
                   ? "bg-[#FFF1F4] text-[#CA2044] border-[#CA2044]"
                   : digit
@@ -282,30 +285,46 @@ const toastId = toast.loading("Resending verification code...", {
               </p>
             </div>
           </div>
-            <button
+
+           <div className="flex gap-3">
+
+
+             <Link to="/">
+              <button className="flex  items-center gap-2 h-16.5 px-8 outline-none bg-[#F7F6FA] rounded-lg text-[14px] font-semibold text-[#6B7280] cursor-pointer">
+              <img src={arrLeft} alt="" className="w-7 h-7" />
+              Go Back
+            </button>
+          </Link>
+
+               <button
               type="button"
               onClick={() => handleSubmit()}
               disabled={!isOtpComplete || isSubmitting || storeLoading}
-              className={`w-full font-semibold rounded-lg h-18 text-[14px] transition mb-4 flex items-center justify-center
+              className={`flex-1 h-16.5 text-white font-semibold rounded-lg text-[14px] w-100.5  cursor-pointer
                 ${
                   isOtpComplete
                     ? "bg-[#5B0AFF] cursor-pointer"
-                    : "bg-[#7C3AED] cursor-not-allowed opacity-75"
+                    : "bg-[#9B6AFF] cursor-not-allowed opacity-75"
                 }
                 text-[#F5F3FF]`}
             >
               {isSubmitting  ? Icons.SpinningIcon : "Verify & Continue"}
             </button>
 
+
+
+            
+
+
+          </div>
+         
+
           
 
-          <Link to="/">
-            <button className="w-full flex items-center justify-center gap-2 bg-[#F7F6FA] text-[#6B7280] font-semibold rounded-lg h-18 text-[14px] cursor-pointer ">
-              <img src={arrLeft} alt="" className="w-7 h-7" />
-              Go Back
-            </button>
-          </Link>
+         
         </div>
+
+        
       </div>
     </Onboarding>
   );

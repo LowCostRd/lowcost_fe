@@ -116,8 +116,13 @@ const handleSubmit = async () => {
       <ToastContainer />
 
       <div className="w-full">
+
+        <div className="sticky top-0 z-50">
         <Step steps={steps} currentStep={currentStep} />
         <hr className="border-[#E5E7EB] w-full" />
+        </div>
+
+
         <div className="mt-30 w-full max-w-200 mx-auto">
           <div className="account-setup-header-wrap">
             <p className="account-setup-header-text">Create Your Account</p>

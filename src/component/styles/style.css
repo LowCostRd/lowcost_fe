@@ -62,10 +62,9 @@
   cursor: pointer;
   font-size: 1.4rem;
   font-weight: 600;
-  transition: opacity 0.2s ease;
+  height: 45px;
 }
 .btn:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
 }
 .btn--secondary {
@@ -85,6 +84,6 @@
 /*# sourceMappingURL=style.css.map */
 
 .btn--unfilled {
-  background-color: #7C3AED;
+  background-color: #9B6AFF;
   cursor: pointer; 
 }

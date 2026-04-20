@@ -1,3 +1,23 @@
+import usaIcon from "../assets/onboarding/flag/usa.svg";
+import australiaIcon from "../assets/onboarding/flag/australia.svg";
+import brazilIcon from "../assets/onboarding/flag/brazil.svg";
+import canadaIcon from "../assets/onboarding/flag/canada.svg";
+import franceIcon from "../assets/onboarding/flag/france.svg";
+import germanyIcon from "../assets/onboarding/flag/germany.svg";
+import irelandIcon from "../assets/onboarding/flag/ireland.svg";
+import japanIcon from "../assets/onboarding/flag/japan.svg";
+import netherlandsIcon from "../assets/onboarding/flag/netherland.svg";
+import newZealandIcon from "../assets/onboarding/flag/newzeeland.svg";
+import saudiIcon from "../assets/onboarding/flag/saudi.svg";
+import singaporeIcon from "../assets/onboarding/flag/singapor.svg";
+import southafricaIcon from "../assets/onboarding/flag/southafrica.svg";
+import switzerlandIcon from "../assets/onboarding/flag/switzerland.svg";
+import uaeIcon from "../assets/onboarding/flag/uae.svg";
+import ukIcon from "../assets/onboarding/flag/uk.svg";
+import deleteIcon from "../assets/general//trash (1).svg";
+import downloadIcon from "../assets/general/Upload.svg";
+
+
 const Icons = {
   google: (
     <svg
@@ -105,6 +125,24 @@ SpinningIcon : (
   <span className="flex items-center justify-center">
       <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
     </span>
-)
+),
+usaIcon : usaIcon,
+australiaIcon  : australiaIcon,
+canadaIcon : canadaIcon,
+brazilIcon : brazilIcon,
+franceIcon : franceIcon,
+germanyIcon : germanyIcon,
+irelandIcon : irelandIcon,
+japanIcon : japanIcon,
+netherlandsIcon : netherlandsIcon,
+newZealandIcon : newZealandIcon,
+saudiIcon : saudiIcon,
+singaporeIcon : singaporeIcon,
+southafricaIcon : southafricaIcon,
+switzerlandIcon : switzerlandIcon,
+uaeIcon : uaeIcon,
+ukIcon : ukIcon,
+deleteIcon : deleteIcon,
+uploadIcon : downloadIcon
 };
 export default Icons;

@@ -1,14 +1,22 @@
+
 import { useState, useRef, useEffect } from "react";
 import "./styles/select.css"
 
+interface SelectOption {
+  label: string;
+  value: string ;
+  flag?: string;        
+}
+
 interface SelectProps {
   label?: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  options: { label: string; value: string }[];
+  value: string;
+  onChange: (value: string) => void;
+  options: SelectOption[];
   placeholder?: string;
   error?: string;
   required?: boolean;
+  className?: string;
 }
 
 const Select = ({
@@ -18,14 +26,15 @@ const Select = ({
   options,
   placeholder = "Select an option",
   error,
-  required,
+  required = false,
+  className = "",
 }: SelectProps) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const selected = options.find((opt) => opt.value === value);
+  const selectedOption = options.find((opt) => opt.value === value);
 
-
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -37,36 +46,37 @@ const Select = ({
   }, []);
 
   return (
-    <div ref={ref} className="relative w-full flex flex-col gap-2">
+    <div ref={ref} className={`relative w-full flex flex-col gap-2 ${className}`}>
       {/* Label */}
       {label && (
-        <label className="text-[14px] font-semibold text-[#1F2937]">
+        <label className="block text-[14px] font-semibold text-[#1F2937] ">
           {label} {required && <span className="text-[#1F2937]">*</span>}
         </label>
       )}
 
-      {/* Trigger */}
+      {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`w-full h-16 px-6 flex items-center justify-between rounded-xl border text-[14px] bg-white cursor-pointer transition
-          ${
-            open
-              ? "border-[#7C3AED]"
-              : error
-              ? "border-[#CA2044]"
-              : "border-[#94A3B8]"
-          }
+        className={`w-full h-16 px-5 flex items-center justify-between rounded-lg border text-[14px] bg-white cursor-pointer transition
+          ${open ? "border-[#7C3AED]" : error ? "border-[#CA2044] bg-[#FFF1F4]" : "border-[#94A3B8]"}
           text-[#1F2937]`}
       >
-        <span className={selected ? "text-[#1F2937]" : "text-[#9CA3AF]"}>
-          {selected ? selected.label : placeholder}
+        <span className="flex items-center gap-2">
+          {selectedOption?.flag && (
+            <img
+              src={selectedOption.flag}
+              alt={selectedOption.label}
+              className="w-10 h-10 object-contain"
+            />
+          )}
+          <span className={selectedOption ? "text-[#1F2937]" : "text-[#9498B8]"}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
         </span>
 
-        <svg
-          className={`w-5 h-5 text-[#9498B8] transition-transform ${
-            open ? "rotate-180" : ""
-          }`}
+          <svg
+          className={`w-7 h-7 text-[#9498B8] transition-transform ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -82,10 +92,9 @@ const Select = ({
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute z-50 top-full mt-1 w-full bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
-          
-          <div className="max-h-85 overflow-y-auto scroll-smooth custom-scrollbar">
-            
+        <div className="absolute z-50 top-full mt-1 w-full bg-white border border-[#E5E7EB] rounded-lg shadow-lg overflow-hidden">
+          <div className="max-h-80 overflow-y-auto custom-scrollbar">
+            {/* Header */}
             <div className="px-5 py-4 border-b border-gray-100">
               <p className="text-[14px] text-[#9CA3AF]">
                 {label || "Select an option"}
@@ -93,39 +102,47 @@ const Select = ({
             </div>
 
             {/* Options */}
-            {options.map((opt, i) => (
-              <div key={opt.value}>
+            {options.map((opt, index) => (
+            
+              <div  key={opt.value}>
                 <button
                   type="button"
                   onClick={() => {
-                    onChange?.(opt.value);
+                    onChange(opt.value);
                     setOpen(false);
                   }}
-                  className={`w-full px-5 py-4 text-left text-[14px] transition
+                  className={`w-full px-5 py-4 text-left text-[14px] flex items-center gap-3 transition
                     ${
                       value === opt.value
-                        ? "bg-[#EDE9FE] text-[#7C3AED] font-medium"
-                        : "text-[#1F2937] hover:bg-gray-50"
+                        ? "bg-[#F3EDFF] text-[#5B0AFF] font-medium"
+                        : "text-[#1F2937] hover:bg-[#F3EDFF]"
                     }`}
                 >
-                  {opt.label}
+                  {opt.flag && (
+                    <img
+                      src={opt.flag}
+                      alt={opt.label}
+                      className="w-10 h-10 object-contain"
+                    />
+                  )}
+                  <span>{opt.label}</span>
                 </button>
 
-                {/* Full-width divider */}
-                {i < options.length - 1 && (
+                {/* Divider between options (except last) */}
+                {index < options.length - 1 && (
                   <hr className="border-gray-100 w-full" />
                 )}
               </div>
             ))}
 
-            <div className="pb-2" />
+            <div className="pb-3" />
           </div>
         </div>
       )}
 
-      {/* Error */}
+      {/* Error Message */}
       {error && (
-        <p className="text-[12px] text-[#CA2044] font-medium mt-1">{error}</p>
+        <p className="text-[13px] text-[#CA2044] mt-1">{error}</p>
       )}
     </div>
   );

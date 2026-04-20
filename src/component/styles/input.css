@@ -17,13 +17,14 @@
   display: flex;
   align-items: center;
   border: 1px solid #94A3B8;
-  border-radius: 8px;
+  border-radius: 5px;
   padding: 1rem 2rem;
   background: #fff;
+  height: 4rem;
   transition: border-color 0.2s ease;
 }
 .input-wrapper .input-container:focus-within {
-  border-color: #7c3aed;
+  border-color: #5B0AFF;
 }
 .input-wrapper .input-container--error {
   border-color: #e74c3c;
@@ -39,7 +40,7 @@
   font-size: 14px;
   background: transparent;
   color: #111;
-  caret-color: #7c3aed; 
+  caret-color: #5B0AFF; 
     flex: 1; 
 
 }
