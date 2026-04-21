@@ -1,4 +1,4 @@
-export const uploadImage = async (file) => {
+export const uploadImage = async (file: File) => {
   const url = `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`;
   const formData = new FormData();
   formData.append("file", file);
