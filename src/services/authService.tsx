@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import type { RegisterHandlerProps, VerifyEmailHandlerProps,ResendOtpHandlerProps } from "../type/auth";
+import type { RegisterHandlerProps, VerifyEmailHandlerProps,ResendOtpHandlerProps, RegisterPracticeIdentityHandlerProps } from "../type/auth";
 
 
 
@@ -79,4 +79,40 @@ export const handleResendOtp = async ({
   resendOtp,
 }: ResendOtpHandlerProps) => {
   await resendOtp(data); 
+};
+
+
+export const handleRegisterPracticeIdentity = async ({
+  data,
+  register_practice_identity,
+  navigate,
+}: RegisterPracticeIdentityHandlerProps) => {
+  try {
+    await register_practice_identity(data);
+
+    toast.success(
+      "Practice identity registered successfully! Please verify your email.",
+      {
+        position: "top-right",
+        autoClose: 4000,
+        style: { fontSize: "16px" },
+      }
+    );
+
+    navigate("/practice-details", {
+      state: { user_id : data.user_id },
+    });
+
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Something went wrong. Please try again.";
+
+    toast.error(message, {
+      position: "top-right",
+      autoClose: 4000,
+      style: { fontSize: "16px" },
+    });
+  }
 };

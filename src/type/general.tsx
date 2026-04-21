@@ -24,3 +24,12 @@ export interface Agreement {
   description: string;
   link?: { label: string; href: string };
 }
+
+export interface CloudinaryPayload{
+  public_id : string;
+}
+
+export interface deleteImageHandlerProps {
+  data: CloudinaryPayload;
+  deleteImage: (data: CloudinaryPayload) => Promise<boolean>;
+}

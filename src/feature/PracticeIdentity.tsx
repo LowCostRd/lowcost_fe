@@ -1,13 +1,21 @@
-import { useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import Onboarding from "../component/Onboarding";
 import Step from "../component/Step";
 import type { StepConfig } from "../type/general";
 import arrLeft from "../assets/general/arrow-left.png";
 import shieldTick from "../assets/onboarding/shield-tick.png";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icons from "../assets/Icons";
 import { State } from 'country-state-city';
 import Select from "../component/Select";
+import { uploadImage } from "../component/UploadImage";
+import { useAuthStore } from "../store/AuthStore";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import DeleteConfirmationModal from "../component/DeleteConfirmationModal ";
+import { handleRegisterPracticeIdentity } from "../services/authService";
+
+import { useGetStore } from "../store/GetStore";
 
 const COUNTRIES = [
   { name: "Australia", flag: Icons.australiaIcon },
@@ -33,6 +41,8 @@ const COUNTRY_TO_ISO: Record<string, string> = {
   "United States": "US", "United Kingdom": "GB", "Other": "",
 };
 
+
+
 const PracticeIdentity = () => {
   const STEPS: StepConfig[] = [
     { id: 1, label: "Account setup" },
@@ -42,12 +52,19 @@ const PracticeIdentity = () => {
     { id: 5, label: "Compliance & terms" },
   ];
 
+  const [imagePublicId, setImagePublicId] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const [name, setName] = useState("");
   const [regNumber, setRegNumber] = useState("");
   const [country, setCountry] = useState("");
   const [stateValue, setStateValue] = useState("");
   const [logo, setLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const [errors, setErrors] = useState({
     name: false,
     regNumber: false,
@@ -62,13 +79,25 @@ const PracticeIdentity = () => {
     ? State.getStatesOfCountry(isoCode).map((s) => s.name).sort()
     : [];
 
-  const handleFileChange = (file: File | null) => {
+  const handleFileChange = async (file: File | null) => {
     if (!file) return;
+
     setLogo(file);
     const reader = new FileReader();
     reader.onload = (e) => setLogoPreview(e.target?.result as string);
     reader.readAsDataURL(file);
     if (fileInputRef.current) fileInputRef.current.value = "";
+
+    setIsUploading(true);
+    try {
+      const result = await uploadImage(file);
+      setImageUrl(result.secure_url);
+      setImagePublicId(result.public_id);
+    } catch (err) {
+      console.error("Upload failed:", err);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -77,20 +106,65 @@ const PracticeIdentity = () => {
     if (file) handleFileChange(file);
   };
 
-  const handleContinue = () => {
-    const newErrors = {
-      name: name.trim() === "",
-      regNumber: regNumber.trim() === "",
-      country: country === "",
-      state: stateValue.trim() === "",
-    };
-    setErrors(newErrors);
-
-    if (!Object.values(newErrors).some(Boolean)) {
-      console.log("Form is valid, proceeding...");
-      // TODO: Add your navigation logic here
-    }
+const { get_user_by_email_address } = useGetStore();
+const { registerPracticeIdentity,isLoading } = useAuthStore();
+ const navigate = useNavigate();
+   const location = useLocation();
+ 
+ 
+const handleContinue = async () => {
+  
+ const newErrors = {
+    name: name.trim() === "",
+    regNumber: regNumber.trim() === "",
+    country: country === "",
+    state: stateValue.trim() === "",
   };
+
+  setErrors(newErrors);
+
+  const hasErrors = Object.values(newErrors).some(Boolean);
+  if (hasErrors) return; 
+
+  const email = location.state?.email || "";
+
+  if (!email) {
+    toast.error("User email not found. Please login again.");
+    return;
+  }
+
+  try {
+
+
+  
+    const user = await get_user_by_email_address({ 
+      email_address: email 
+    });
+
+        if (!user || !user._id) {
+        throw new Error("Unable to retrieve user information.");
+      }
+
+    const payload = {
+      user_id: user._id,
+      name,
+      number: regNumber,
+      country,
+      logo: imageUrl || "",
+      state: stateValue,
+    };
+
+    await handleRegisterPracticeIdentity({
+      data: payload,
+      register_practice_identity: registerPracticeIdentity,
+      navigate,
+    });
+
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Something went wrong";
+    toast.error(message);
+  }
+};
 
   const isFormComplete =
     name.trim() !== "" &&
@@ -98,9 +172,66 @@ const PracticeIdentity = () => {
     country !== "" &&
     stateValue.trim() !== "";
 
+  const deleteImage = useAuthStore((state) => state.deleteImage);
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    setIsDeleting(true);
+
+    const toastId = toast.loading("Deleting logo...", {
+      style: { fontSize: "14px" },
+    });
+
+    try {
+      if (imagePublicId) {
+        await deleteImage({ public_id: imagePublicId });
+      }
+
+      toast.update(toastId, {
+        render: "Logo deleted successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+        style: { fontSize: "14px" },
+      });
+
+      setLogo(null);
+      setLogoPreview("");
+      setImageUrl("");
+      setImagePublicId("");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to delete logo. Please try again.";
+
+      toast.update(toastId, {
+        render: message,
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+        style: { fontSize: "14px" },
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+  };
+
   return (
     <div>
       <Onboarding>
+        <ToastContainer />
+
         <div className="w-full">
           <div className="sticky top-0 z-50">
             <Step steps={STEPS} currentStep={3} />
@@ -163,7 +294,6 @@ const PracticeIdentity = () => {
 
             {/* Country & State */}
             <div className="grid grid-cols-2 gap-4 mb-6">
-              {/* Country Select */}
               <Select
                 label="Country"
                 value={country}
@@ -182,7 +312,6 @@ const PracticeIdentity = () => {
                 required
               />
 
-              {/* City / State — swaps to text input when "Other" is selected */}
               {country === "Other" ? (
                 <div>
                   <label className="block text-[14px] font-semibold text-[#1F2937] mb-2">
@@ -219,7 +348,7 @@ const PracticeIdentity = () => {
               )}
             </div>
 
-            {/* Practice logo */}
+         
             <div className="mb-8">
               <label className="block text-[14px] font-semibold text-[#1F2937]">
                 Practice logo <span className="font-normal">(optional)</span>
@@ -231,7 +360,14 @@ const PracticeIdentity = () => {
 
               {logo ? (
                 <div className="flex items-center gap-4 px-5 py-4">
-                  <img src={logoPreview} alt="logo preview" className="w-30 h-30 object-cover rounded-md" />
+                  <div className="relative w-30 h-30 shrink-0">
+                    <img src={logoPreview} alt="logo preview" className="w-full h-full object-cover rounded-md" />
+                    {isUploading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-md">
+                        <div className="w-6 h-6 border-2 border-[#5B0AFF] border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    )}
+                  </div>
                   <div className="flex-1">
                     <p className="text-[14px] font-medium text-[#1F2937]">{logo.name}</p>
                     <div className="mt-1">
@@ -241,11 +377,7 @@ const PracticeIdentity = () => {
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setLogo(null);
-                      setLogoPreview("");
-                      if (fileInputRef.current) fileInputRef.current.value = "";
-                    }}
+                    onClick={handleDeleteClick}
                     className="flex items-center gap-1 text-[#CA2044] text-[14px] font-medium cursor-pointer"
                   >
                     <img src={Icons.deleteIcon} alt="Delete" className="w-5 h-5" />
@@ -269,7 +401,7 @@ const PracticeIdentity = () => {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".png,.jpg,.jpeg,.svg"
+                accept="image/*"
                 className="hidden"
                 onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
               />
@@ -296,15 +428,25 @@ const PracticeIdentity = () => {
               </Link>
               <button
                 onClick={handleContinue}
-                className={`flex-1 h-16.5 font-semibold rounded-lg text-[14px] text-white cursor-pointer transition
-                  ${isFormComplete ? "bg-[#5B0AFF]" : "bg-[#9B6AFF]"}`}
+                disabled={isUploading}
+                className={`flex-1 h-16.5 font-semibold rounded-lg text-[14px] text-white transition
+                  ${isFormComplete && !isUploading ? "bg-[#5B0AFF] cursor-pointer" : "bg-[#9B6AFF] cursor-pointer"}`}
               >
-                Continue
+                   {isLoading ? (Icons.SpinningIcon) : "Continue"}
+             
               </button>
             </div>
           </div>
         </div>
       </Onboarding>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 };
