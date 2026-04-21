@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { create } from "zustand";
-import type { AuthState, RegisterPayload, ResendOtpPayload, VerifyEmailPayload } from "../type/auth";
+import type { AuthState, RegisterPayload, RegisterPracticeIdentityPayload, ResendOtpPayload, VerifyEmailPayload } from "../type/auth";
+import type { CloudinaryPayload } from "../type/general";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -63,7 +64,39 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
+deleteImage: async (data: CloudinaryPayload) => {
+    set({ isLoading: true });
+    try {
+      await axios.post(`${BASE_URL}/v1/api/delete-image`, data);
+      set({ isLoading: false });
+      return true;
+    } catch (error) {
+      set({ isLoading: false });
+      throw new Error(handleApiError(error, "Failed to delete image. Please try again."));
+    }
+  },
 
+  registerPracticeIdentity: async (data: RegisterPracticeIdentityPayload) => {
+  set({ isLoading: true });
+  try {
+    await axios.post(
+      `${BASE_URL}/v1/api/register_practice_identity`,
+      data
+    );
+
+    set({ isLoading: false });
+
+    return true;
+  } catch (error) {
+    set({ isLoading: false });
+    throw new Error(
+      handleApiError(
+        error,
+        "Failed to register practice identity. Please try again."
+      )
+    );
+  }
+},
 
 
 
