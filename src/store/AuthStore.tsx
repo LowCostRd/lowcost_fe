@@ -26,6 +26,46 @@ const handleApiError = (error: unknown, defaultMessage: string): string => {
 export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
 
+  registrationForm: {
+    full_name: "",
+    email_address: "",
+    role: "",
+  },
+    practiceIdentityForm: {
+    name: "",
+    regNumber: "",
+    country: "",
+    stateValue: "",
+    imageUrl: "",
+    imagePublicId: "",
+  },
+
+  practiceDetailsForm: {
+  main_phone_number: "",
+  website: "",
+  number_of_practitioners: "",
+  insurance_plans: [],
+},
+
+setPracticeDetailsForm: (data) =>
+  set((state) => ({
+    practiceDetailsForm: { ...state.practiceDetailsForm, ...data },
+  })),
+  
+
+  setRegistrationForm: (data) =>
+    set((state) => ({
+      registrationForm: { ...state.registrationForm, ...data },
+    })),
+
+
+  setPracticeIdentityForm: (data) => 
+    set((state) => ({ 
+      practiceIdentityForm: { ...state.practiceIdentityForm, ...data } 
+    })),
+
+
+
   register: async (data: RegisterPayload) => {
     set({ isLoading: true });
     try {

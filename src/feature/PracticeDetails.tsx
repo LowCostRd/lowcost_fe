@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Onboarding from "../component/Onboarding";
 import PractitionerDropdown from "../component/PractitionerDropdown";
 import Step from "../component/Step";
@@ -205,45 +205,72 @@ const STEPS: StepConfig[] = [
 
 const PracticeDetails = () => {
   const location = useLocation();
-  const country: string = location.state?.country || "Other";
+  const country: string = location.state?.country || useAuthStore.getState().practiceIdentityForm.country|| "Other";
+
+  
 
   const insurancePlans =
     INSURANCE_PLANS_BY_COUNTRY[country] ?? INSURANCE_PLANS_BY_COUNTRY["Other"];
 
-  const [phone, setPhone] = useState("");
-  const [website, setWebsite] = useState("");
-  const [practitioners, setPractitioners] = useState("");
-  const [selectedPlans, setSelectedPlans] = useState<Set<string>>(new Set());
+  const { get_user_by_id } = useGetStore();
+  const {registerPracticeDetails,isLoading, practiceDetailsForm, setPracticeDetailsForm,  } = useAuthStore();
+
+  const navigate = useNavigate();
+  const user_id = location.state?.user_id || "";
+
+  const [phone, setPhone] = useState(practiceDetailsForm.main_phone_number);
+  const [website, setWebsite] = useState(practiceDetailsForm.website);
+  const [practitioners, setPractitioners] = useState(practiceDetailsForm.number_of_practitioners);
+  const [selectedPlans, setSelectedPlans] = useState<Set<string>>(new Set(practiceDetailsForm.insurance_plans));
+
   const [errors, setErrors] = useState({
     phone: false,
     practitioners: false,
     plans: false,
   });
-    const { get_user_by_id } = useGetStore();
-    const {registerPracticeDetails,isLoading } = useAuthStore();
-    const navigate = useNavigate();
-    const user_id = location.state?.user_id || "";
 
-  const togglePlan = (plan: string) => {
-    setSelectedPlans((prev) => {
-      const next = new Set(prev);
-      if (next.has(plan)) next.delete(plan);
-      else next.add(plan);
-      return next;
-    });
-    if (errors.plans) setErrors((prev) => ({ ...prev, plans: false }));
-  };
+
+  useEffect(() => {
+  if (practiceDetailsForm.insurance_plans.length > 0) {
+    setSelectedPlans(new Set(practiceDetailsForm.insurance_plans));
+  }
+}, [practiceDetailsForm.insurance_plans]);
+
+const togglePlan = (plan: string) => {
+  setSelectedPlans((prev) => {
+    const next = new Set(prev);
+    if (next.has(plan)) {
+      next.delete(plan);
+    } else {
+      next.add(plan);
+    }
+    
+    // IMPORTANT: Update the store immediately so "Back" logic works correctly
+    setPracticeDetailsForm({ insurance_plans: Array.from(next) });
+    return next;
+  });
+
+  if (errors.plans) setErrors((prev) => ({ ...prev, plans: false }));
+};
 
 
 
   const handleContinue = async () => {
+    const plansArray = Array.from(selectedPlans);
     const newErrors = {
       phone: phone.trim() === "",
       practitioners: practitioners === "",
-      plans: selectedPlans.size === 0,
+      plans: plansArray.length === 0,
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some(Boolean)) return;
+
+    setPracticeDetailsForm({
+      main_phone_number: phone,
+      website: website,
+      number_of_practitioners: practitioners,
+      insurance_plans: plansArray,
+    });
 
   
       if (!user_id) {

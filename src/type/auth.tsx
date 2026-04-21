@@ -3,6 +3,30 @@ import type { CloudinaryPayload } from "./general";
 
 export interface AuthState {
   isLoading: boolean;
+  registrationForm: {
+    full_name: string;
+    email_address: string;
+    role: string;
+  };
+  practiceIdentityForm: {
+    name: string,
+    regNumber: string,
+    country: string,
+    stateValue: string,
+    imageUrl: string,
+    imagePublicId: string,
+  },
+
+  practiceDetailsForm: {
+  main_phone_number: string;
+  website: string;
+  number_of_practitioners: string;
+  insurance_plans: string[];
+},
+
+  setRegistrationForm: (data: Partial<AuthState["registrationForm"]>) => void;
+   setPracticeIdentityForm: (data: Partial<AuthState["practiceIdentityForm"]>) => void;
+   setPracticeDetailsForm: (data: Partial<AuthState["practiceDetailsForm"]>) => void;
   register: (data: RegisterPayload) => Promise<boolean>;
    verifyEmail: (data: VerifyEmailPayload) => Promise<boolean>;
    resendOtp : (data : ResendOtpPayload) => Promise<boolean>;

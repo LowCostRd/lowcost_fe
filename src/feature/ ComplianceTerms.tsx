@@ -214,7 +214,7 @@ const ComplianceTerms = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mb-10">
-            <Link to="/practice-details">
+            <Link to="/practice-details" state={{ user_id : location.state?.user_id}}>
               <button
                 type="button"
                 className="flex items-center justify-center gap-2 h-16.5 text-[14px] px-6 rounded-lg outline-none cursor-pointer font-semibold text-[#6B7280] bg-[#F7F6FA] w-full sm:w-auto"
