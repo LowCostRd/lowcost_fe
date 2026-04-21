@@ -88,7 +88,7 @@ const PractitionerDropdown = ({
                 {option}
               </button>
               {i < PRACTITIONER_OPTIONS.length - 1 && (
-                <hr className="border-gray-100 mx-5" />
+                <hr className="border-gray-100 " />
               )}
             </div>
           ))}
