@@ -2,9 +2,8 @@ import {  useRef, useState } from "react";
 import Onboarding from "../component/Onboarding";
 import Step from "../component/Step";
 import type { StepConfig } from "../type/general";
-import arrLeft from "../assets/general/arrow-left.png";
 import shieldTick from "../assets/onboarding/shield-tick.png";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {  useLocation, useNavigate } from "react-router-dom";
 import Icons from "../assets/Icons";
 import { State } from 'country-state-city';
 import Select from "../component/Select";
@@ -51,16 +50,21 @@ const PracticeIdentity = () => {
     { id: 5, label: "Compliance & terms" },
   ];
 
-  const [imagePublicId, setImagePublicId] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
-  const [name, setName] = useState("");
-  const [regNumber, setRegNumber] = useState("");
-  const [country, setCountry] = useState("");
-  const [stateValue, setStateValue] = useState("");
-  const [logo, setLogo] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string>("");
+  const { get_user_by_email_address } = useGetStore();
+const { registerPracticeIdentity, isLoading, practiceIdentityForm, setPracticeIdentityForm } = useAuthStore();
+ const navigate = useNavigate();
+   const location = useLocation();
 
+  const [name, setName] = useState(practiceIdentityForm.name);
+  const [regNumber, setRegNumber] = useState(practiceIdentityForm.regNumber);
+  const [country, setCountry] = useState(practiceIdentityForm.country);
+  const [stateValue, setStateValue] = useState(practiceIdentityForm.stateValue);
+  const [imageUrl, setImageUrl] = useState(practiceIdentityForm.imageUrl);
+  const [imagePublicId, setImagePublicId] = useState(practiceIdentityForm.imagePublicId);
+  const [logoPreview, setLogoPreview] = useState(practiceIdentityForm.imageUrl);
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [logo, setLogo] = useState<File | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -92,6 +96,7 @@ const PracticeIdentity = () => {
       const result = await uploadImage(file);
       setImageUrl(result.secure_url);
       setImagePublicId(result.public_id);
+      setPracticeIdentityForm({ imageUrl: result.secure_url, imagePublicId: result.public_id });
     } catch (err) {
       console.error("Upload failed:", err);
     } finally {
@@ -105,11 +110,7 @@ const PracticeIdentity = () => {
     if (file) handleFileChange(file);
   };
 
-const { get_user_by_email_address } = useGetStore();
-const { registerPracticeIdentity,isLoading } = useAuthStore();
- const navigate = useNavigate();
-   const location = useLocation();
- 
+
  
 const handleContinue = async () => {
   
@@ -125,7 +126,8 @@ const handleContinue = async () => {
   const hasErrors = Object.values(newErrors).some(Boolean);
   if (hasErrors) return; 
 
-  const email = location.state?.email || "";
+  setPracticeIdentityForm({ name, regNumber, country, stateValue, imageUrl, imagePublicId });
+  const email = location.state?.email || useAuthStore.getState().registrationForm.email_address;
 
   if (!email) {
     toast.error("User email not found. Please login again.");
@@ -133,8 +135,6 @@ const handleContinue = async () => {
   }
 
   try {
-
-
   
     const user = await get_user_by_email_address({ 
       email_address: email 
@@ -419,12 +419,7 @@ const handleContinue = async () => {
 
             {/* Actions */}
             <div className="flex gap-3 mb-20">
-              <Link to="/verify-email">
-                <button className="flex items-center gap-2 h-16.5 px-8 bg-[#F7F6FA] rounded-lg text-[14px] font-semibold text-[#6B7280] cursor-pointer">
-                  <img src={arrLeft} alt="" className="w-7 h-7" />
-                  Go Back
-                </button>
-              </Link>
+          
               <button
                 onClick={handleContinue}
                 disabled={isUploading}

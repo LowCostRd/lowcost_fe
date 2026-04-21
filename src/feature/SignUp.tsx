@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import {  ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuthStore } from "../store/AuthStore";
@@ -13,7 +13,8 @@ import Button from "../component/Botton";
 import { handleRegister } from "../services/authService";
 
 const SignUp = () => {
-  const { register, isLoading } = useAuthStore();
+
+  const { register, isLoading, registrationForm, setRegistrationForm } = useAuthStore();
 
   const steps = [
     { id: 1, label: "Account setup" },
@@ -24,9 +25,11 @@ const SignUp = () => {
   ];
 
   const [currentStep] = useState(1);
-  const [role, setRole] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+
+
+  const [fullName, setFullName] = useState(registrationForm.full_name);
+  const [role, setRole] = useState(registrationForm.role);
+  const [email, setEmail] = useState(registrationForm.email_address);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -97,6 +100,12 @@ const SignUp = () => {
   
 const handleSubmit = async () => {
   if (!validate()) return;
+
+  setRegistrationForm({
+      full_name: fullName,
+      email_address: email,
+      role: role,
+    });
 
   await handleRegister({
     data: {
