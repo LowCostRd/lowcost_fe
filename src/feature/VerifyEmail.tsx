@@ -29,9 +29,10 @@ const VerifyEmail = () => {
   const [isResending, setIsResending] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const { registrationForm } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
-  const email = location.state?.email || "";
+  const email = location.state?.email || registrationForm.email_address;
 
   const { verifyEmail, isLoading: storeLoading } = useAuthStore();
     const { resendOtp } = useAuthStore();
@@ -289,7 +290,7 @@ const toastId = toast.loading("Resending verification code...", {
            <div className="flex gap-3">
 
 
-             <Link to="/">
+             <Link to="/" >
               <button className="flex  items-center gap-2 h-16.5 px-8 outline-none bg-[#F7F6FA] rounded-lg text-[14px] font-semibold text-[#6B7280] cursor-pointer">
               <img src={arrLeft} alt="" className="w-7 h-7" />
               Go Back
