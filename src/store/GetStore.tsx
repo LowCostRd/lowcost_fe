@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { create } from "zustand";
-import type { GetState, getUserPayload, getUserResponse } from "../type/user";
+import type { GetState, getUserByIdPayload, getUserPayload, getUserResponse } from "../type/user";
 
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -41,7 +41,26 @@ export const useGetStore = create<GetState>((set) => ({
       return response.data.message as getUserResponse;
     } catch (error) {
       set({ isLoading: false });
-      throw new Error(handleApiError(error, "Failed to get user. Please try again."));
+      throw new Error(handleApiError(error, "Failed to get user by email. Please try again."));
+    }
+  },
+
+    get_user_by_id: async (data: getUserByIdPayload) => {
+    set({ isLoading: true });
+    try {
+         const response = await axios.get(
+            `${BASE_URL}/v1/api/users/by-id`,
+            {
+                params: {
+                 user_id: data.id,
+                },
+            }
+            );
+      set({ isLoading: false });
+      return response.data.message as getUserResponse;
+    } catch (error) {
+      set({ isLoading: false });
+      throw new Error(handleApiError(error, "Failed to get user by id. Please try again."));
     }
   },
 
