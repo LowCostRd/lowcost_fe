@@ -1,20 +1,23 @@
 import { useState } from "react";
 import Onboarding from "../component/Onboarding";
 import Step from "../component/Step";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import arrLeft from "../assets/general/arrow-left.png";
 import hospitalIcon from "../assets/onboarding/hospital.png";
 import documentIcon from "../assets/onboarding/document-text.png";
 import shieldIcon from "../assets/onboarding/shield-security.png";
 import editIcon from "../assets/onboarding/edit-2.png";
 import type { Agreement, StepConfig } from "../type/general";
-
-
+import { toast, ToastContainer } from "react-toastify";
+import { useGetStore } from "../store/GetStore";
+import { useAuthStore } from "../store/AuthStore";
+import { handleRegisterComplianceTerms } from "../services/authService";
+import Icons from "../assets/Icons";
 
 const AGREEMENTS: Agreement[] = [
   {
     id: "hipaa",
-    icon: hospitalIcon,           
+    icon: hospitalIcon,
     title: "HIPAA Business Associate Agreement (BAA)",
     badge: "Required",
     badgeColor: "orange",
@@ -63,6 +66,12 @@ const STEPS: StepConfig[] = [
 const ComplianceTerms = () => {
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { get_user_by_id } = useGetStore();
+  const { registerComplianceTerms, isLoading } = useAuthStore();
+  const user_id = location.state?.user_id || "";
+
   const toggleCheck = (id: string) => {
     setChecked((prev) => {
       const next = new Set(prev);
@@ -77,12 +86,47 @@ const ComplianceTerms = () => {
 
   const allChecked = AGREEMENTS.every((a) => checked.has(a.id));
 
+  const handleConfirm = async () => {
+    if (!allChecked) return;
+
+    if (!user_id) {
+      toast.error("User ID not found. Please login again.");
+      return;
+    }
+
+    try {
+      const user = await get_user_by_id({ id: user_id });
+
+      if (!user || !user._id) {
+        throw new Error("Unable to retrieve user information.");
+      }
+
+      const payload = {
+        user_id: user._id,
+        business_associate_agreement: checked.has("hipaa"),
+        terms_of_service: checked.has("tos"),
+        data_processing_agreement: checked.has("dpa"),
+        practice_information_accuracy: checked.has("accuracy"),
+      };
+
+      await handleRegisterComplianceTerms({
+        data: payload,
+        register_compliance_terms: registerComplianceTerms,
+        navigate,
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(message);
+    }
+  };
+
   return (
     <Onboarding>
+      <ToastContainer />
       <div className="w-full">
-         <div className="sticky top-0 z-50">
-        <Step steps={STEPS} currentStep={5} />
-        <hr className="border-[#E5E7EB] w-full" />
+        <div className="sticky top-0 z-50">
+          <Step steps={STEPS} currentStep={5} />
+          <hr className="border-[#E5E7EB] w-full" />
         </div>
 
         <div className="mt-27 w-full max-w-197 mx-auto">
@@ -98,7 +142,6 @@ const ComplianceTerms = () => {
             </span>
           </p>
 
-          {/* Agreement Cards */}
           <div className="flex flex-col gap-4 mb-10">
             {AGREEMENTS.map((agreement) => {
               const isChecked = checked.has(agreement.id);
@@ -114,15 +157,9 @@ const ComplianceTerms = () => {
                     }`}
                 >
                   <div className="flex items-start justify-between gap-4">
-                    {/* Left content */}
                     <div className="flex items-start gap-4 flex-1">
-
-                      <div className="w-11 h-11 rounded-full bg-[#FAFAFA] flex items-center justify-center shrink-0 ">
-                        <img
-                          src={agreement.icon as string}
-                          alt={agreement.title}
-                          className="w-6 h-6"
-                        />
+                      <div className="w-11 h-11 rounded-full bg-[#FAFAFA] flex items-center justify-center shrink-0">
+                        <img src={agreement.icon as string} alt={agreement.title} className="w-6 h-6" />
                       </div>
 
                       <div className="flex-1">
@@ -141,7 +178,7 @@ const ComplianceTerms = () => {
                           </span>
                         </div>
 
-                        <p className="text-[12px] text-[#6B7280] mt-3 ">
+                        <p className="text-[12px] text-[#6B7280] mt-3">
                           {agreement.description}
                         </p>
 
@@ -157,7 +194,6 @@ const ComplianceTerms = () => {
                       </div>
                     </div>
 
-                    {/* Custom Checkbox */}
                     <div
                       className={`w-5 h-5 rounded-md shrink-0 flex items-center justify-center border mt-1 transition-all
                         ${isChecked
@@ -166,18 +202,8 @@ const ComplianceTerms = () => {
                         }`}
                     >
                       {isChecked && (
-                        <svg
-                          className="w-3 h-3 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       )}
                     </div>
@@ -187,12 +213,11 @@ const ComplianceTerms = () => {
             })}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 mb-10">
             <Link to="/practice-details">
               <button
                 type="button"
-                className="flex items-center justify-center gap-2 h-16.5 text-[14px] px-6 rounded-lg outline-none cursor-pointer font-semibold text-[#6B7280]  bg-[#F7F6FA] w-full sm:w-auto"
+                className="flex items-center justify-center gap-2 h-16.5 text-[14px] px-6 rounded-lg outline-none cursor-pointer font-semibold text-[#6B7280] bg-[#F7F6FA] w-full sm:w-auto"
               >
                 <img src={arrLeft} alt="" className="w-7 h-7" />
                 Go Back
@@ -201,14 +226,15 @@ const ComplianceTerms = () => {
 
             <button
               type="button"
-              disabled={!allChecked}
+              onClick={handleConfirm}
+              disabled={!allChecked || isLoading}
               className={`flex-1 h-16.5 text-white font-semibold rounded-lg text-[14px] transition
-                ${allChecked 
-                  ? "bg-[#5B0AFF] cursor-pointer" 
+                ${allChecked
+                  ? "bg-[#5B0AFF] cursor-pointer"
                   : "bg-[#9B6AFF] opacity-75 cursor-not-allowed"
                 }`}
             >
-              Confirm & Activate Account
+              {isLoading ? Icons.SpinningIcon : "Confirm & Activate Account"}
             </button>
           </div>
         </div>

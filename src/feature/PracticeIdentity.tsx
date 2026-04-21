@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import DeleteConfirmationModal from "../component/DeleteConfirmationModal ";
 import { handleRegisterPracticeIdentity } from "../services/authService";
-
 import { useGetStore } from "../store/GetStore";
 
 const COUNTRIES = [

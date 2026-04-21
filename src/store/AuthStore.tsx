@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { create } from "zustand";
-import type { AuthState, RegisterPayload, RegisterPracticeIdentityPayload, ResendOtpPayload, VerifyEmailPayload } from "../type/auth";
+import type { AuthState, RegisterComplianceTermsPayload, RegisterPayload, RegisterPracticeDetailsPayload, RegisterPracticeIdentityPayload, ResendOtpPayload, VerifyEmailPayload } from "../type/auth";
 import type { CloudinaryPayload } from "../type/general";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -98,8 +98,48 @@ deleteImage: async (data: CloudinaryPayload) => {
   }
 },
 
+registerPracticeDetails: async (data: RegisterPracticeDetailsPayload) => {
+  set({ isLoading: true });
+  try {
+    await axios.post(
+      `${BASE_URL}/v1/api/register_practice_details`,
+      data
+    );
+
+    set({ isLoading: false });
+
+    return true;
+  } catch (error) {
+    set({ isLoading: false });
+    throw new Error(
+      handleApiError(
+        error,
+        "Failed to register practice details. Please try again."
+      )
+    );
+  }
+},
 
 
+registerComplianceTerms: async (data: RegisterComplianceTermsPayload) => {
+  set({ isLoading: true });
+  try {
+    await axios.post(
+      `${BASE_URL}/v1/api/register_compliance`,
+      data
+    );
+    set({ isLoading: false });
+    return true;
+  } catch (error) {
+    set({ isLoading: false });
+    throw new Error(
+      handleApiError(
+        error,
+        "Failed to register compliance terms. Please try again."
+      )
+    );
+  }
+},
 
 
 }));

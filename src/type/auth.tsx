@@ -7,9 +7,11 @@ export interface AuthState {
    verifyEmail: (data: VerifyEmailPayload) => Promise<boolean>;
    resendOtp : (data : ResendOtpPayload) => Promise<boolean>;
    deleteImage : (data : CloudinaryPayload) => Promise<boolean>;
-    registerPracticeIdentity: (
-    data: RegisterPracticeIdentityPayload
-  ) => Promise<boolean>; 
+   registerPracticeIdentity: (data: RegisterPracticeIdentityPayload) => Promise<boolean>; 
+   registerPracticeDetails: (data: RegisterPracticeDetailsPayload) => Promise<boolean>; 
+   registerComplianceTerms: (data: RegisterComplianceTermsPayload) => Promise<boolean>; 
+   
+
 }
 
 
@@ -34,6 +36,18 @@ export interface ResendOtpHandlerProps {
 export interface RegisterPracticeIdentityHandlerProps {
   data: RegisterPracticeIdentityPayload;
   register_practice_identity: (data: RegisterPracticeIdentityPayload) => Promise<boolean>;
+  navigate: NavigateFunction;
+}
+
+export interface RegisterPracticeDetailsHandlerProps {
+  data: RegisterPracticeDetailsPayload;
+  register_practice_details: (data: RegisterPracticeDetailsPayload) => Promise<boolean>;
+  navigate: NavigateFunction;
+}
+
+export interface RegisterComplianceTermsHandlerProps {
+  data: RegisterComplianceTermsPayload;
+  register_compliance_terms: (data: RegisterComplianceTermsPayload) => Promise<boolean>;
   navigate: NavigateFunction;
 }
 
@@ -72,4 +86,24 @@ export interface RegisterPracticeIdentityPayload {
   logo : string;
   state : string;
 }
+
+export interface RegisterPracticeDetailsPayload {
+  user_id: string;
+  main_phone_number: string;
+  website: string;
+  number_of_practitioners: string;
+  insurance_plans: string[];
+}
+
+
+
+export interface RegisterComplianceTermsPayload{
+    user_id: string;
+    business_associate_agreement: boolean;
+    terms_of_service: boolean;
+    data_processing_agreement: boolean,
+    practice_information_accuracy: boolean;
+}
+
+
 
