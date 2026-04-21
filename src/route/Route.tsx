@@ -25,6 +25,7 @@ export const Route = [
     {
         path: "/compliance-terms",
         element : <ComplianceTerms/>
-    },
+    }
+
 
 ]
