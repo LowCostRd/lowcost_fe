@@ -11,10 +11,10 @@ import PracticeInformationPage  from "../feature/pages/PracticeInformationPage";
 import EHRIntegrationsPage      from "../feature/pages/EHRIntegrationsPage";
 import SettingsPage             from "../feature/pages/SettingsPage";
 import HelpPage                 from "../feature/pages/HelpPage";
-import { useState } from "react";
+import { useState, type JSX } from "react";
  
-// Map tab IDs → page components
-const PAGE_MAP = {
+
+const PAGE_MAP: Record<string, JSX.Element> = {
   "call-analytics":          <CallAnalyticsPage />,
   "my-assistants":           <MyAssistantsPage />,
   "call-handling":           <CallHandlingPage />,

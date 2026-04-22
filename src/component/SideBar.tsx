@@ -1,7 +1,10 @@
 import { NavIcons } from "../component/NavIcon";
 import { NAV_ITEMS, BOTTOM_NAV_ITEMS } from "../component/Navigation";
+import type { NavItemProps, SideBarProps } from "../type/sidemenu";
 
-const NavItem = ({ item, isActive, onClick }) => {
+
+
+const NavItem = ({ item, isActive, onClick }: NavItemProps) => {
   const Icon = NavIcons[item.icon];
   return (
     <button
@@ -22,7 +25,7 @@ const NavItem = ({ item, isActive, onClick }) => {
   );
 };
 
-const SideBar = ({ activeTab, onTabChange }) => {
+const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
   return (
     <aside className="w-100 bg-[#FFF] flex flex-col shrink-0 h-screen sticky top-0">
       
@@ -86,7 +89,7 @@ const SideBar = ({ activeTab, onTabChange }) => {
 
         {/* User profile */}
         <div className="flex items-center gap-5 px-6 pt-3 mt-20 pb-6">
-          <div className="w-18 h-18 rounded-full bg-yellow-400 flex items-center justify-center text-[16px] font-bold text-[#1F2937] shrink-0">
+          <div className="w-18 h-18 rounded-full bg-[#F4E082] flex items-center justify-center text-[16px] font-bold text-[#1F2937] shrink-0">
             LE
           </div>
           <span className="text-[16px] font-medium text-gray-700 flex-1 truncate">
