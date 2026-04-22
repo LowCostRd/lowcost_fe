@@ -32,7 +32,7 @@ const Dashboard = () => {
 
 
   
-    <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#F7F6F9] font-sans overflow-hidden">
       <SideBar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1 h-screen overflow-y-auto">
         {PAGE_MAP[activeTab] ?? <div className="p-8 text-gray-400">Page not found.</div>}

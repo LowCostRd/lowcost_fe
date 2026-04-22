@@ -15,7 +15,7 @@ const NavItem = ({ item, isActive, onClick }: NavItemProps) => {
           : "text-[#6B7280] hover:bg-gray-50"
         }`}
     >
-      <span className="flex items-center gap-4 px-6">
+      <span className="flex items-center gap-4 px-8">
         <span className={isActive ? "text-[#5B0AFF]" : "text-[#6B7280]"}>
           <Icon />
         </span>
@@ -32,12 +32,12 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
       {/* ── Fixed header: logo + search + "Menu" label ── */}
       <div className="shrink-0 pt-10">
         {/* Logo */}
-        <div className="px-6 mb-10">
+        <div className="px-8 mb-10">
           <NavIcons.Logo />
         </div>
 
         {/* Search */}
-        <div className="relative mb-7 px-6">
+        <div className="relative mb-7 px-8">
           <span className="absolute left-10 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none">
             <NavIcons.Search />
           </span>
@@ -52,7 +52,7 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
         </div>
 
         {/* Section label */}
-        <p className="text-[12px] font-normal text-[#BBBBBB] uppercase tracking-widest px-6 mb-7">
+        <p className="text-[12px] font-normal text-[#BBBBBB] uppercase tracking-widest px-8 mb-7">
           Menu
         </p>
       </div>
@@ -70,7 +70,7 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
             />
           ))}
 
-          <div className="px-6 mt-20">
+          <div className="px-8 mt-20">
             <hr className="border-[#F2F2F2] w-full" />
           </div>
         </nav>
@@ -88,7 +88,7 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
         </div>
 
         {/* User profile */}
-        <div className="flex items-center gap-5 px-6 pt-3 mt-20 pb-6">
+        <div className="flex items-center gap-5 px-8 pt-3 mt-20 pb-6">
           <div className="w-18 h-18 rounded-full bg-[#F4E082] flex items-center justify-center text-[16px] font-bold text-[#1F2937] shrink-0">
             LE
           </div>
