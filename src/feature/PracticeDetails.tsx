@@ -245,7 +245,7 @@ const togglePlan = (plan: string) => {
       next.add(plan);
     }
     
-    // IMPORTANT: Update the store immediately so "Back" logic works correctly
+
     setPracticeDetailsForm({ insurance_plans: Array.from(next) });
     return next;
   });
