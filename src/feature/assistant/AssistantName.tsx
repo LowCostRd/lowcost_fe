@@ -45,7 +45,7 @@ const AssistantName = ({ config, onBack, onNext }: AssistantNameProps) => {
     title: config?.title
       ? config.title
       : specialty
-      ? `Let's Set Up Your ${specialty.title.replace("Practice"," ")} Assistant`
+      ? `Let's Set Up Your ${specialty.title} Assistant`
       : defaultConfig.title,
   };
 

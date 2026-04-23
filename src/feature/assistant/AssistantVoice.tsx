@@ -45,7 +45,7 @@ const AssistantVoice = () => {
   const assistantName = location.state?.assistantName as string || "Assistant";
 
   const displayTitle = specialty 
-    ? `Let's Set Up Your ${specialty.title.replace("Practice", " ")} Assistant`
+    ? `Let's Set Up Your ${specialty.title} Assistant`
     : `Let's Set Up Your ${assistantName}`;
 
   const visibleVoices = showAll ? VOICES : VOICES.slice(0, 3);
