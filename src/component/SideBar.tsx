@@ -1,35 +1,16 @@
 import { NavIcons } from "../component/NavIcon";
 import { NAV_ITEMS, BOTTOM_NAV_ITEMS } from "../component/Navigation";
-import type { NavItemProps, SideBarProps } from "../type/sidemenu";
+import type { SideBarProps } from "../type/sidemenu";
+import NavItem from "./NavItem";
+import "./styles/sidebar.css"
 
 
 
-const NavItem = ({ item, isActive, onClick }: NavItemProps) => {
-  const Icon = NavIcons[item.icon];
-  return (
-    <button
-      onClick={() => onClick(item.id)}
-      className={`flex items-center cursor-pointer gap-4 w-full py-5 text-[14px] font-medium transition-all duration-150 text-left
-        ${isActive
-          ? "bg-[#F3EDFF] border-r-4 border-[#5B0AFF] text-[#5B0AFF]"
-          : "text-[#6B7280] hover:bg-gray-50"
-        }`}
-    >
-      <span className="flex items-center gap-4 px-8">
-        <span className={isActive ? "text-[#5B0AFF]" : "text-[#6B7280]"}>
-          <Icon />
-        </span>
-        {item.label}
-      </span>
-    </button>
-  );
-};
 
 const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
   return (
     <aside className="w-100 bg-[#FFF] flex flex-col shrink-0 h-screen sticky top-0">
-      
-      {/* ── Fixed header: logo + search + "Menu" label ── */}
+  
       <div className="shrink-0 pt-10">
         {/* Logo */}
         <div className="px-8 mb-10">
@@ -51,14 +32,18 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
           </span>
         </div>
 
-        {/* Section label */}
-        <p className="text-[12px] font-normal text-[#BBBBBB] uppercase tracking-widest px-8 mb-7">
-          Menu
-        </p>
+     
       </div>
 
       {/* ── Scrollable nav area ── */}
-      <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
+
+      <div className="flex-1 overflow-y-auto flex flex-col min-h-0 custom-scrollbar">
+
+          {/* Section label */}
+              <p className="text-[12px] font-normal text-[#BBBBBB] uppercase tracking-widest px-8 mb-7">
+                Menu
+              </p>
+        
         {/* Main nav */}
         <nav className="flex flex-col gap-2">
           {NAV_ITEMS.map((item) => (
@@ -69,14 +54,13 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
               onClick={onTabChange}
             />
           ))}
-
           <div className="px-8 mt-20">
             <hr className="border-[#F2F2F2] w-full" />
           </div>
         </nav>
 
-        {/* Bottom nav */}
-        <div className="flex flex-col gap-0.5 pt-3 mt-2">
+        {/* Bottom nav — grows to push profile down */}
+        <div className="flex flex-col gap-0.5 pt-3 mt-2 flex-1">  
           {BOTTOM_NAV_ITEMS.map((item) => (
             <NavItem
               key={item.id}
@@ -87,9 +71,14 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
           ))}
         </div>
 
-        {/* User profile */}
-        <div className="flex items-center gap-5 px-8 pt-3 mt-20 pb-6">
-          <div className="w-18 h-18 rounded-full bg-[#F4E082] flex items-center justify-center text-[16px] font-bold text-[#1F2937] shrink-0">
+
+
+
+      </div>
+
+        <div className="flex items-center gap-5 px-8 py-5 border-t border-[#F2F2F2] bg-white sticky bottom-0">
+
+        <div className="w-18 h-18 rounded-full bg-[#F4E082] flex items-center justify-center text-[14px] font-semibold text-[#1F2937] shrink-0">
             LE
           </div>
           <span className="text-[16px] font-medium text-gray-700 flex-1 truncate">
@@ -99,7 +88,6 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
             <NavIcons.ChevronDown />
           </span>
         </div>
-      </div>
 
     </aside>
   );
