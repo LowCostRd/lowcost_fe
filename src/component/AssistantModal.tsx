@@ -1,4 +1,5 @@
-import type { Specialty } from "../type/general";
+import type { Specialty } from "../type/assistant";
+
 
 const AssistantModal = ({
     item,
