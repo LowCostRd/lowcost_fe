@@ -34,12 +34,3 @@ export interface deleteImageHandlerProps {
   deleteImage: (data: CloudinaryPayload) => Promise<boolean>;
 }
 
-export type Specialty = {
-  id: string;
-  icon: string ;
-  title: string;
-  description: string;
-  badge?: string | null;
-  modalDescription: string;
-  handles: string[];
-};
