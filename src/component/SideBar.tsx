@@ -76,7 +76,7 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
         </nav>
 
         {/* Bottom nav */}
-        <div className="flex flex-col gap-0.5 pt-3 mt-2">
+        <div className="flex flex-col gap-0.5 pt-3 mt-2 mb-50">
           {BOTTOM_NAV_ITEMS.map((item) => (
             <NavItem
               key={item.id}
@@ -88,13 +88,14 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
         </div>
 
         {/* User profile */}
-        <div className="flex items-center gap-5 px-8 pt-3 mt-20 pb-6">
+        <div className="flex items-center gap-5 px-8 pt-3 mt-20 pb-6 fixed bottom-0 z-50 bg-white">
           <div className="w-18 h-18 rounded-full bg-[#F4E082] flex items-center justify-center text-[16px] font-bold text-[#1F2937] shrink-0">
             LE
           </div>
           <span className="text-[16px] font-medium text-gray-700 flex-1 truncate">
             Lucky Ekezie
           </span>
+
           <span className="cursor-pointer">
             <NavIcons.ChevronDown />
           </span>
