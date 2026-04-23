@@ -128,7 +128,7 @@ const MyAssistantsPage = () => {
           <button
             key={item.id}
             onClick={() => handleOpenModal(item.id)}
-            className="bg-white p-10 text-left outline-none cursor-pointer border border-transparent hover:border-[#5B0AFF] relative rounded-[14px] transition-all duration-200 hover:shadow-[0_10px_30px_rgba(91,10,255,0.15)]"
+            className="bg-white p-10 text-left outline-none cursor-pointer border border-transparent hover:border-[#5B0AFF] relative rounded-[14px] transition-all duration-200 hover:shadow-[0_0_10px_-2px_rgba(111,66,239,0.4)]"
           >
             {item.badge && (
               <span className="absolute top-7 right-6 text-[10px] font-medium p-0.5 px-4 rounded-3xl bg-[#F7F3FF] text-[#5B0AFF]">
