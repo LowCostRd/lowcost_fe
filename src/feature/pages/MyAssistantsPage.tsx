@@ -1,5 +1,4 @@
-import { useState } from "react";
-import type { Specialty } from "../../type/general";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import AssistantModal from "../../component/AssistantModal";
 import hospitalIcon from "../../assets/assistant/🏥.png";
 import teethIcon from "../../assets/assistant/🦷.png";
@@ -10,8 +9,7 @@ import starIcon from "../../assets/assistant/✨.png";
 import womanIcon from "../../assets/assistant/🤰.png";
 import boneIcon from "../../assets/assistant/🦴.png";
 import drugIcon from "../../assets/assistant/💊.png";
-
-
+import type { Specialty } from "../../type/assistant";
 
 const specialties: Specialty[] = [
   {
@@ -47,8 +45,8 @@ const specialties: Specialty[] = [
     title: "Pediatrics",
     description: "Children's healthcare and family-friendly communication",
     badge: "New",
-    modalDescription: "Children's healthcare and family-friendly communication",
-    handles: ["Well-child visit scheduling", "Vaccine reminders", "Growth & development FAQs", "Parent education", "After-hours triage"],
+    modalDescription: "Tailored for pediatric clinics and children's hospitals. Warm, reassuring tone designed to put parents at ease.",
+    handles: ["Well-child & sick visit booking", "Vaccination schedule queries", "Parent & caregiver communication", "Sick child triage guidance", "Emergency escalation"],
   },
   {
     id: "mental",
@@ -97,18 +95,26 @@ const specialties: Specialty[] = [
   },
 ];
 
-
-
 const MyAssistantsPage = () => {
-  const [activeModal, setActiveModal] = useState<Specialty | null>(null);
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeId = searchParams.get("specialty");
+  const activeModal = specialties.find((s) => s.id === activeId) || null;
+
+  const handleOpenModal = (id: string) => {
+    setSearchParams({ specialty: id });
+  };
+
+  const handleCloseModal = () => {
+    setSearchParams({}); 
+  };
 
   return (
     <div className="min-h-screen justify-center flex flex-col py-20">
       {/* Header */}
       <div className="text-center ">
-        <h1
-          className="font-bold text-[28px] text-[#1F2937] mb-6 "
-        >
+        <h1 className="font-bold text-[28px] text-[#1F2937] mb-6 ">
           Set Up Your Medical Assistant
         </h1>
         <p className="text-[#6B7280] font-semibold text-[18px] ">
@@ -117,22 +123,15 @@ const MyAssistantsPage = () => {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-3 gap-8 max-xl:max-w-300 mt-20 max-w-360 mx-auto"
-      
-      >
+      <div className="grid grid-cols-3 gap-8 max-xl:max-w-300 mt-20 max-w-360 mx-auto">
         {specialties.map((item) => (
           <button
             key={item.id}
-            onClick={() => setActiveModal(item)}
-         
-
-           className="bg-white p-10 text-left outline-none cursor-pointer border border-transparent hover:border-[#5B0AFF] relative rounded-[14px] transition-all duration-200 hover:shadow-[0_10px_30px_rgba(91,10,255,0.15)]"
+            onClick={() => handleOpenModal(item.id)}
+            className="bg-white p-10 text-left outline-none cursor-pointer border border-transparent hover:border-[#5B0AFF] relative rounded-[14px] transition-all duration-200 hover:shadow-[0_10px_30px_rgba(91,10,255,0.15)]"
           >
             {item.badge && (
-              <span
-
-                className="absolute top-7 right-6 text-[10px] font-medium p-0.5 px-4 rounded-3xl bg-[#F7F3FF] text-[#5B0AFF]"
-              >
+              <span className="absolute top-7 right-6 text-[10px] font-medium p-0.5 px-4 rounded-3xl bg-[#F7F3FF] text-[#5B0AFF]">
                 {item.badge}
               </span>
             )}
@@ -150,10 +149,10 @@ const MyAssistantsPage = () => {
                 marginBottom: "14px",
               }}
             >
-              <img src={item.icon} className="w-10 h-10"/>
+              <img src={item.icon} className="w-10 h-10" alt={item.title} />
             </div>
 
-            <div className="text-[18px] text-[#1F2937] font-semibold mb-1.5" style={{letterSpacing: "-0.01em" }}>
+            <div className="text-[18px] text-[#1F2937] font-semibold mb-1.5" style={{ letterSpacing: "-0.01em" }}>
               {item.title}
             </div>
 
@@ -168,15 +167,17 @@ const MyAssistantsPage = () => {
       {activeModal && (
         <AssistantModal
           item={activeModal}
-          onClose={() => setActiveModal(null)}
+          onClose={handleCloseModal}
           onContinue={() => {
-            alert(`Setting up ${activeModal.title}...`);
-            setActiveModal(null);
+
+            navigate("/my-assistants/setup/name", {
+              state: { specialty: activeModal },
+            });
           }}
         />
       )}
 
-     <button
+      <button
         className="bg-[#5B0AFF] fixed bottom-7 right-7 text-white border-none p-4 rounded-[500px] px-12 font-normal text-[14px] cursor-pointer"
         onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.05)"; }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
