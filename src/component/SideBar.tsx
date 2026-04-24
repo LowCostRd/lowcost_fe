@@ -39,7 +39,7 @@ const SideBar = ({ activeTab, onTabChange }: SideBarProps) => {
 
       <div className="flex-1 overflow-y-auto flex flex-col min-h-0 custom-scrollbar">
 
-          {/* Section label */}
+     
               <p className="text-[12px] font-normal text-[#BBBBBB] uppercase tracking-widest px-8 mb-7">
                 Menu
               </p>
