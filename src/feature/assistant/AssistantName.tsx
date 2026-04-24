@@ -126,7 +126,7 @@ const handleSuggestion = (label: string) => {
       {/* ── Main Content ── */}
       <div className="flex-1 flex flex-col items-center pt-14">
           <div className="text-center mb-4">
-            <h1 className="text-[29px] font-bold text-[#1F2937] leading-tight mb-2">
+            <h1 className="text-[29px] font-semibold text-[#1F2937] leading-tight mb-2">
               {merged.title}
             </h1>
             <p className="text-[#6B7280] font-normal mt-5 mb-20 text-[19px]">{merged.subtitle}</p>

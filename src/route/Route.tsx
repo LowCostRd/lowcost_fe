@@ -1,5 +1,6 @@
 import ComplianceTerms from "../feature/ ComplianceTerms";
 import AssistantName from "../feature/assistant/AssistantName";
+import AssistantRole from "../feature/assistant/AssistantRole";
 import AssistantVoice from "../feature/assistant/AssistantVoice";
 import Dashboard from "../feature/Dashboard";
 import AppointmentWorkflowsPage from "../feature/pages/AppointmentWorkflowsPage";
@@ -58,6 +59,7 @@ export const Route = [
 
     { path: "/my-assistants/setup/name", element: <AssistantName /> },
     { path: "/my-assistants/setup/voice", element: <AssistantVoice /> },
+    {path: "/my-assistants/setup/role", element: <AssistantRole/>}
 
 
 ]
