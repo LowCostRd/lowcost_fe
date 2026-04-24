@@ -18,8 +18,8 @@ const specialties: Specialty[] = [
     title: "General Practice",
     description: "Family medicine, internal medicine, and primary care",
     badge: "Most Popular",
-    modalDescription: "Family medicine, internal medicine, and primary care",
-    handles: ["Appointment scheduling", "Insurance verification", "Referral coordination", "Prescription follow-ups", "Patient triage"],
+    modalDescription: "Perfect for GP surgeries, family medicine clinics, and primary care practices handling a wide range of patient needs.",
+    handles: ["Appointment booking & check-ups", "Prescription enquiries", "Referral management", "Test result guidance", "Emergency call routing"],
   },
   {
     id: "dental",
@@ -27,7 +27,7 @@ const specialties: Specialty[] = [
     title: "Dental Practice",
     description: "General dentistry, orthodontics, and dental specialists",
     badge: null,
-    modalDescription: "General dentistry, orthodontics, and dental specialists",
+    modalDescription: "Perfect for general dentistry, orthodontics,and dental specialists",
     handles: ["Appointment scheduling", "Insurance verification", "Treatment questions", "Emergency routing", "Follow-up reminders"],
   },
   {
@@ -36,8 +36,8 @@ const specialties: Specialty[] = [
     title: "Optometry Practice",
     description: "Eye exams, vision care, and optical services",
     badge: null,
-    modalDescription: "Eye exams, vision care, and optical services",
-    handles: ["Exam scheduling", "Lens & frame inquiries", "Insurance eligibility checks", "Vision plan questions", "Prescription renewals"],
+    modalDescription: "Built for optometry clinics and optical shops managing eye exams, contact lens orders, and eyewear enquiries.",
+    handles: ["Eye exam booking", "Contact lens & eyewear orders", "Prescription queries", "Insurance verification", "Post-procedure follow-up"],
   },
   {
     id: "pediatrics",
@@ -54,8 +54,8 @@ const specialties: Specialty[] = [
     title: "Mental Health",
     description: "Therapy, counseling, and psychiatric services",
     badge: null,
-    modalDescription: "Therapy, counseling, and psychiatric services",
-    handles: ["Session scheduling", "Crisis resource routing", "Intake form assistance", "Medication questions", "Insurance & billing support"],
+    modalDescription: "Sensitive, calm communication built for therapy practices and psychiatric clinics. Includes crisis escalation protocols.",
+    handles: ["Therapy session booking", "Intake form assistance", "Crisis escalation (hard override)", "After-hours crisis routing", "Session reminders"],
   },
   {
     id: "dermatology",
@@ -63,8 +63,8 @@ const specialties: Specialty[] = [
     title: "Dermatology",
     description: "Skin care, cosmetic procedures, and dermatology",
     badge: null,
-    modalDescription: "Skin care, cosmetic procedures, and dermatology",
-    handles: ["Appointment booking", "Pre/post-care instructions", "Cosmetic consultation inquiries", "Prescription refill requests", "Follow-up scheduling"],
+    modalDescription: "For dermatology clinics and medical spas handling skin consultations, cosmetic procedures, and skincare queries.",
+    handles: ["Consultation booking", "Procedure enquiries", "Pre & post-procedure instructions", "Insurance verification", "Follow-up care"],
   },
   {
     id: "obgyn",
@@ -72,8 +72,8 @@ const specialties: Specialty[] = [
     title: "OB/GYN",
     description: "Women's health, prenatal care, and gynecology",
     badge: null,
-    modalDescription: "Women's health, prenatal care, and gynecology",
-    handles: ["OB appointment scheduling", "Prenatal FAQs", "Lab result follow-ups", "Birth plan coordination", "Insurance verification"],
+    modalDescription: "Designed for obstetrics and gynecology practices. Includes labor & delivery escalation and prenatal care support.",
+    handles: ["Prenatal visit booking", "Labour & delivery routing (override)", "Test result guidance", "Post-partum follow-up", "Insurance verification"],
   },
   {
     id: "orthopedics",
@@ -81,8 +81,8 @@ const specialties: Specialty[] = [
     title: "Orthopedics",
     description: "Bone, joint, and sports medicine specialists",
     badge: null,
-    modalDescription: "Bone, joint, and sports medicine specialists",
-    handles: ["Consultation scheduling", "Post-surgery follow-ups", "Physical therapy coordination", "Imaging appointment booking", "Injury assessment routing"],
+    modalDescription: "For orthopedic surgeons, sports medicine clinics, and physiotherapy practices managing surgical and rehabilitation patients.",
+    handles: ["Consultation & surgery booking", "Pre-surgery instructions", "Post-surgery follow-up", "Physiotherapy scheduling", "Imaging enquiries"],
   },
   {
     id: "pharmacy",
@@ -90,8 +90,8 @@ const specialties: Specialty[] = [
     title: "Pharmacy",
     description: "Prescription refills, medication questions, and pharmacy services",
     badge: null,
-    modalDescription: "Prescription refills, medication questions, and pharmacy services",
-    handles: ["Refill requests", "Drug interaction FAQs", "Insurance & copay questions", "Ready pickup notifications", "Transfer coordination"],
+    modalDescription: "For retail pharmacies and hospital dispensaries handling prescription refills, medication queries, and delivery management.",
+    handles: ["Prescription refill requests", "Medication availability queries", "Ready notification calls", "Delivery & collection management", "Emergency medication routing"],
   },
 ];
 
@@ -114,7 +114,7 @@ const MyAssistantsPage = () => {
     <div className="min-h-screen justify-center flex flex-col py-20">
       {/* Header */}
       <div className="text-center ">
-        <h1 className="font-bold text-[28px] text-[#1F2937] mb-6 ">
+        <h1 className="font-semibold text-[28px] text-[#1F2937] mb-6 ">
           Set Up Your Medical Assistant
         </h1>
         <p className="text-[#6B7280] font-semibold text-[18px] ">
