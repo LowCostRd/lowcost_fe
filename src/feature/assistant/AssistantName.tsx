@@ -96,7 +96,7 @@ const handleSuggestion = (label: string) => {
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
       {/* ── Step Progress Bar ── */}
-        <div className="sticky top-0 z-50">
+        <div className="sticky top-0 z-50 bg-white">
             <div className="py-5">
                  <Step steps={STEPS} currentStep={1} />
             </div>
