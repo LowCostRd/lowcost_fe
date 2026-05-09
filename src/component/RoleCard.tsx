@@ -33,7 +33,7 @@ const RoleCard = ({
       </div>
 
       {/* Icon + Title */}
-      <div className="flex items-center gap-3.5 mb-2 pr-6">
+      <div className="flex items-start gap-3.5 mb-2 pr-6">
         <img src={role.icon} className="w-7 h-7"/>
         <h3 className="font-semibold text-[#1F2937] text-[14px] leading-snug">{role.title}</h3>
       </div>
