@@ -9,7 +9,7 @@ const NavItem = ({ item, isActive, onClick }: NavItemProps) => {
       className={`flex items-center cursor-pointer gap-4 w-full py-5 text-[14px] font-normal transition-all duration-150 text-left
         ${isActive
           ? "bg-[#F3EDFF] border-r-4 border-[#5B0AFF] text-[#5B0AFF]"
-          : "text-[#6B7280] hover:bg-gray-50"
+          : "text-[#6B7280] bg-white hover:bg-gray-50"
         }`}
     >
       <span className="flex items-center gap-4 px-8">

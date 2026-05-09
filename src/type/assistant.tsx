@@ -150,7 +150,7 @@ export const SPECIALTY_ROLES: Record<string, Role[]> = {
     { id: "triad",          title: "Sick child triage guidance",   description: "Help parents determine urgency and next steps",             icon: tool },
     { id: "emergency_routing", title: "Emergency call routing",       description: "Immediately escalate urgent pediatric emergencies to staff",     icon: emergency},
     { id: "followup",          title: "Follow up after visits",   description: "Check in with parents after procedures or sick visits",             icon: mail },
-    { id: "Parent communication",          title: "Follow up after visits",   description: "Send updates and health tips to parents or caregiver between visits",  icon: parent },
+    { id: "Parent communication",          title: "Parent communication",   description: "Send updates and health tips to parents or caregiver between visits",  icon: parent },
 
   ],
 
