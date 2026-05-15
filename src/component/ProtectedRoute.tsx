@@ -1,0 +1,46 @@
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "../store/AuthStore";
+import LoadingScreen from "./LoadingScreen";
+
+
+const ONBOARDING_ROUTES: Record<string, string> = {
+  "verify-email": "/verify-email",
+  "practice-identity": "/practice-identity",
+  "practice-details": "/practice-details",
+  "compliance-terms": "/compliance-terms",
+};
+
+const ONBOARDING_PATHS = [
+  "/verify-email",
+  "/practice-identity",
+  "/practice-details",
+  "/compliance-terms",
+];
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading, isEmailVerified, onboardingStep } = useAuthStore();
+  const token = localStorage.getItem("access_token");
+  const { pathname } = useLocation();
+  const isOnboardingPath = ONBOARDING_PATHS.includes(pathname);
+  const isAppPath = !isOnboardingPath && pathname !== "/signin";
+
+  if (isLoading && !isOnboardingPath) return <LoadingScreen />;
+
+  if (token && isAuthenticated && onboardingStep !== "complete" && isAppPath) {
+    const redirectTo = ONBOARDING_ROUTES[onboardingStep ?? ""] || "/practice-identity";
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  if (token && isAuthenticated) return <>{children}</>;
+
+  if (isEmailVerified && isOnboardingPath) return <>{children}</>;
+
+  return <Navigate to="/signin" replace />;
+};
+
+export default ProtectedRoute;
+
+
+
+
+

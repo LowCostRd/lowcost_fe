@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { create } from "zustand";
-import type { AuthState, RegisterComplianceTermsPayload, RegisterPayload, RegisterPracticeDetailsPayload, RegisterPracticeIdentityPayload, ResendOtpPayload, VerifyEmailPayload } from "../type/auth";
+import api from "../services/AxiosInstance"; 
+import type { AuthState, LoginPayload, OnboardingStep, RegisterComplianceTermsPayload, RegisterPayload, RegisterPracticeDetailsPayload, RegisterPracticeIdentityPayload, ResendOtpPayload, VerifyEmailPayload } from "../type/auth";
 import type { CloudinaryPayload } from "../type/general";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -9,9 +10,9 @@ interface ApiErrorResponse {
   error_message?: string;
   message?: string;
 }
+
 const handleApiError = (error: unknown, defaultMessage: string): string => {
   let message = defaultMessage;
-
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError<ApiErrorResponse>;
     message =
@@ -19,19 +20,32 @@ const handleApiError = (error: unknown, defaultMessage: string): string => {
       axiosError.response?.data?.message ||
       message;
   }
-
   return message;
 };
 
+const savedIdentity = localStorage.getItem("onboarding_practice_identity");
+const savedDetails = localStorage.getItem("onboarding_practice_details");
+
 export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
+  accessToken: localStorage.getItem("access_token") || null,
+  currentUser: null,
+  isAuthenticated: false,
+  isEmailVerified: false,
+  onboardingStep: (localStorage.getItem("onboarding_step") as OnboardingStep) || null,
+
+  setOnboardingStep: (step: OnboardingStep) => {
+    localStorage.setItem("onboarding_step", step);
+    set({ onboardingStep: step });
+  },
 
   registrationForm: {
     full_name: "",
     email_address: "",
     role: "",
   },
-    practiceIdentityForm: {
+
+  practiceIdentityForm: savedIdentity ? JSON.parse(savedIdentity) : {
     name: "",
     regNumber: "",
     country: "",
@@ -40,36 +54,42 @@ export const useAuthStore = create<AuthState>((set) => ({
     imagePublicId: "",
   },
 
-  practiceDetailsForm: {
-  main_phone_number: "",
-  website: "",
-  number_of_practitioners: "",
-  insurance_plans: [],
-},
-
-setPracticeDetailsForm: (data) =>
-  set((state) => ({
-    practiceDetailsForm: { ...state.practiceDetailsForm, ...data },
-  })),
-  
+  practiceDetailsForm: savedDetails ? JSON.parse(savedDetails) : {
+    main_phone_number: "",
+    website: "",
+    number_of_practitioners: "",
+    insurance_plans: [],
+  },
 
   setRegistrationForm: (data) =>
     set((state) => ({
       registrationForm: { ...state.registrationForm, ...data },
     })),
 
+  setPracticeIdentityForm: (data) => {
+    set((state) => {
+      const updated = { ...state.practiceIdentityForm, ...data };
+      localStorage.setItem("onboarding_practice_identity", JSON.stringify(updated));
+      return { practiceIdentityForm: updated };
+    });
+  },
 
-  setPracticeIdentityForm: (data) => 
-    set((state) => ({ 
-      practiceIdentityForm: { ...state.practiceIdentityForm, ...data } 
-    })),
+  setPracticeDetailsForm: (data) => {
+    set((state) => {
+      const updated = { ...state.practiceDetailsForm, ...data };
+      localStorage.setItem("onboarding_practice_details", JSON.stringify(updated));
+      return { practiceDetailsForm: updated };
+    });
+  },
 
-
-
+  // ← axios (no auth needed for public routes)
   register: async (data: RegisterPayload) => {
     set({ isLoading: true });
     try {
       await axios.post(`${BASE_URL}/v1/api/register`, data);
+      localStorage.setItem("registration_email", data.email_address.trim().toLowerCase());
+      localStorage.setItem("onboarding_step", "verify-email");
+      localStorage.setItem("returning_user", "true");
       set({ isLoading: false });
       return true;
     } catch (error) {
@@ -78,21 +98,26 @@ setPracticeDetailsForm: (data) =>
     }
   },
 
+  // ← axios (no auth needed for public routes)
   verifyEmail: async (data: VerifyEmailPayload) => {
     set({ isLoading: true });
     try {
       await axios.post(`${BASE_URL}/v1/api/verify_otp`, data);
-      set({ isLoading: false });
+      localStorage.setItem("onboarding_step", "practice-identity");
+      set({
+        isLoading: false,
+        isEmailVerified: true,
+        onboardingStep: "practice-identity",
+      });
       return true;
     } catch (error) {
       set({ isLoading: false });
       throw new Error(handleApiError(error, "Email verification failed. Please try again."));
     }
   },
-  
 
-
-    resendOtp: async (data: ResendOtpPayload) => {
+  // ← axios (no auth needed for public routes)
+  resendOtp: async (data: ResendOtpPayload) => {
     set({ isLoading: true });
     try {
       await axios.patch(`${BASE_URL}/v1/api/resend_otp`, data);
@@ -104,10 +129,49 @@ setPracticeDetailsForm: (data) =>
     }
   },
 
-deleteImage: async (data: CloudinaryPayload) => {
+  // ← axios (no auth needed for public routes)  
+  login: async (data: LoginPayload) => {
     set({ isLoading: true });
     try {
-      await axios.post(`${BASE_URL}/v1/api/delete-image`, data);
+      const response = await axios.post(`${BASE_URL}/auth/login`, data, {
+        withCredentials: true, // ← needed to receive the refresh cookie
+      });
+      const { access_token, user } = response.data;
+
+      const onboardingStep = user.onboarding_step || "complete";
+
+      if (onboardingStep !== "complete") {
+        localStorage.setItem("onboarding_step", onboardingStep);
+        if (user.id) localStorage.setItem("onboarding_user_id", user.id);
+        if (user.email) localStorage.setItem("registration_email", user.email);
+      } else {
+        localStorage.removeItem("onboarding_step");
+        localStorage.removeItem("onboarding_user_id");
+        localStorage.removeItem("registration_email");
+      }
+      localStorage.setItem("returning_user", "true");
+      localStorage.setItem("access_token", access_token);
+
+      set({
+        isLoading: false,
+        accessToken: access_token,
+        currentUser: user,
+        isAuthenticated: true,
+        onboardingStep,
+      });
+
+      return true;
+    } catch (error) {
+      set({ isLoading: false });
+      throw new Error(handleApiError(error, "Login failed. Please check your credentials and try again."));
+    }
+  },
+
+  // ← api (authenticated, benefits from interceptor + refresh)
+  deleteImage: async (data: CloudinaryPayload) => {
+    set({ isLoading: true });
+    try {
+      await api.post(`/v1/api/delete-image`, data);
       set({ isLoading: false });
       return true;
     } catch (error) {
@@ -116,71 +180,69 @@ deleteImage: async (data: CloudinaryPayload) => {
     }
   },
 
+  // ← api (authenticated, benefits from interceptor + refresh)
   registerPracticeIdentity: async (data: RegisterPracticeIdentityPayload) => {
-  set({ isLoading: true });
-  try {
-    await axios.post(
-      `${BASE_URL}/v1/api/register_practice_identity`,
-      data
-    );
+    set({ isLoading: true });
+    try {
+      await api.post(`/v1/api/register_practice_identity`, data);
+      localStorage.setItem("onboarding_step", "practice-details");
+      set({ isLoading: false, onboardingStep: "practice-details" });
+      return true;
+    } catch (error) {
+      set({ isLoading: false });
+      throw new Error(handleApiError(error, "Failed to register practice identity. Please try again."));
+    }
+  },
 
-    set({ isLoading: false });
+  // ← api (authenticated, benefits from interceptor + refresh)
+  registerPracticeDetails: async (data: RegisterPracticeDetailsPayload) => {
+    set({ isLoading: true });
+    try {
+      await api.post(`/v1/api/register_practice_details`, data);
+      localStorage.setItem("onboarding_step", "compliance-terms");
+      set({ isLoading: false, onboardingStep: "compliance-terms" });
+      return true;
+    } catch (error) {
+      set({ isLoading: false });
+      throw new Error(handleApiError(error, "Failed to register practice details. Please try again."));
+    }
+  },
 
-    return true;
-  } catch (error) {
-    set({ isLoading: false });
-    throw new Error(
-      handleApiError(
-        error,
-        "Failed to register practice identity. Please try again."
-      )
-    );
-  }
-},
+  // ← api (authenticated, benefits from interceptor + refresh)
+  registerComplianceTerms: async (data: RegisterComplianceTermsPayload) => {
+    set({ isLoading: true });
+    try {
+      await api.post(`/v1/api/register_compliance`, data);
+      localStorage.removeItem("onboarding_step");
+      localStorage.removeItem("registration_email");
+      localStorage.removeItem("onboarding_user_id");
+      localStorage.removeItem("onboarding_country");
+      localStorage.removeItem("onboarding_practice_identity");
+      localStorage.removeItem("onboarding_practice_details");
+      set({ isLoading: false, onboardingStep: "complete" });
+      return true;
+    } catch (error) {
+      set({ isLoading: false });
+      throw new Error(handleApiError(error, "Failed to register compliance terms. Please try again."));
+    }
+  },
 
-registerPracticeDetails: async (data: RegisterPracticeDetailsPayload) => {
-  set({ isLoading: true });
-  try {
-    await axios.post(
-      `${BASE_URL}/v1/api/register_practice_details`,
-      data
-    );
-
-    set({ isLoading: false });
-
-    return true;
-  } catch (error) {
-    set({ isLoading: false });
-    throw new Error(
-      handleApiError(
-        error,
-        "Failed to register practice details. Please try again."
-      )
-    );
-  }
-},
-
-
-registerComplianceTerms: async (data: RegisterComplianceTermsPayload) => {
-  set({ isLoading: true });
-  try {
-    await axios.post(
-      `${BASE_URL}/v1/api/register_compliance`,
-      data
-    );
-    set({ isLoading: false });
-    return true;
-  } catch (error) {
-    set({ isLoading: false });
-    throw new Error(
-      handleApiError(
-        error,
-        "Failed to register compliance terms. Please try again."
-      )
-    );
-  }
-},
-
-
+  // ← api (authenticated, benefits from interceptor + refresh)
+  logout: async () => {
+    try {
+      await api.post(`/auth/logout`);
+    } catch (error) {
+      console.error("Logout API failed:", error);
+    } finally {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("onboarding_step");
+      localStorage.removeItem("onboarding_user_id");
+      localStorage.removeItem("registration_email");
+      localStorage.removeItem("onboarding_country");
+      localStorage.removeItem("onboarding_practice_identity");
+      localStorage.removeItem("onboarding_practice_details");
+      set({ accessToken: null, currentUser: null, isAuthenticated: false, isEmailVerified: false });
+      window.location.href = "/signin";
+    }
+  },
 }));
-

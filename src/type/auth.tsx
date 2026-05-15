@@ -3,6 +3,14 @@ import type { CloudinaryPayload } from "./general";
 
 export interface AuthState {
   isLoading: boolean;
+  accessToken: string | null;      
+  currentUser: User | null; 
+  isAuthenticated: boolean;
+  isEmailVerified: boolean;
+  onboardingStep: OnboardingStep | null;       
+  setOnboardingStep: (step: OnboardingStep) => void; 
+
+
   registrationForm: {
     full_name: string;
     email_address: string;
@@ -34,6 +42,9 @@ export interface AuthState {
    registerPracticeIdentity: (data: RegisterPracticeIdentityPayload) => Promise<boolean>; 
    registerPracticeDetails: (data: RegisterPracticeDetailsPayload) => Promise<boolean>; 
    registerComplianceTerms: (data: RegisterComplianceTermsPayload) => Promise<boolean>; 
+   login: (data: LoginPayload) => Promise<boolean>;
+   logout: () => Promise<void>;
+
    
 
 }
@@ -75,6 +86,11 @@ export interface RegisterComplianceTermsHandlerProps {
   navigate: NavigateFunction;
 }
 
+
+export interface LoginHandlerProps {
+  data: LoginPayload;
+  login: (data: LoginPayload) => Promise<boolean>;
+}
 
 export interface User {
   id: string;
@@ -119,6 +135,7 @@ export interface RegisterPracticeDetailsPayload {
   insurance_plans: string[];
 }
 
+export type OnboardingStep = "verify-email" | "practice-identity" | "practice-details" | "compliance-terms" | "complete";
 
 
 export interface RegisterComplianceTermsPayload{
@@ -127,6 +144,12 @@ export interface RegisterComplianceTermsPayload{
     terms_of_service: boolean;
     data_processing_agreement: boolean,
     practice_information_accuracy: boolean;
+}
+
+export interface LoginPayload{
+  email: string;
+  password: string;
+
 }
 
 
