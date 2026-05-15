@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import type { RegisterHandlerProps, VerifyEmailHandlerProps,ResendOtpHandlerProps, RegisterPracticeIdentityHandlerProps, RegisterPracticeDetailsHandlerProps, RegisterComplianceTermsHandlerProps, LoginHandlerProps } from "../type/auth";
+import type { RegisterHandlerProps, VerifyEmailHandlerProps,ResendOtpHandlerProps, RegisterPracticeIdentityHandlerProps, RegisterPracticeDetailsHandlerProps, RegisterComplianceTermsHandlerProps, LoginHandlerProps, LoginHandlerResult } from "../type/auth";
 
 
 
@@ -23,7 +23,7 @@ export const handleRegister = async ({
              setTimeout(() =>
      navigate("/verify-email", {
       state: { email: data.email_address },
-    }), 1500);
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -102,12 +102,11 @@ export const handleRegisterPracticeIdentity = async ({
       }
     );
 
- 
 
          setTimeout(() =>
       navigate("/practice-details", {
       state: { user_id : data.user_id , country : data.country},
-    }), 1500);
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -142,12 +141,11 @@ export const handleRegisterPracticeDetails = async ({
       }
     );
 
-
         
      setTimeout(() =>
     navigate("/compliance-terms", {
       state: { user_id : data.user_id},
-    }), 1500);
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -185,7 +183,7 @@ export const handleRegisterComplianceTerms = async ({
     
      setTimeout(() =>navigate("/dashboard", {
       state: { user_id : data.user_id},
-    }), 1500);
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -201,13 +199,16 @@ export const handleRegisterComplianceTerms = async ({
   }
 };
 
-
 export const handleLogin = async ({
   data,
   login,
-}: LoginHandlerProps) => {
+}: LoginHandlerProps): Promise<LoginHandlerResult> => {
   try {
-    await login(data);
+    const result = await login(data);
+
+    if (result && typeof result === "object" && "unverified" in result) {
+      return { unverified: true, email: result.email };
+    }
 
     toast.success("Login successful!", {
       position: "top-right",

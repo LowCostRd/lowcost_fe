@@ -10,6 +10,7 @@ import Icons from "../assets/Icons";
 import Input from "../component/input";
 import Button from "../component/Botton";
 import LoadingScreen from "../component/LoadingScreen";
+import type { LoginHandlerResult } from "../type/auth";
 
 const ONBOARDING_ROUTES: Record<string, string> = {
   "verify-email": "/verify-email",
@@ -43,39 +44,45 @@ const SignIn = () => {
     return Object.values(newErrors).every((e) => e === "");
   };
 
-  const handleSubmit = async () => {
-    if (!validate()) return;
+const handleSubmit = async () => {
+  if (!validate()) return;
 
-    try {
-      const response = await handleLogin({
-        data: { email, password },
-        login,
+  try {
+    const result: LoginHandlerResult = await handleLogin({
+      data: { email, password },
+      login,
+    });
+
+    if (result?.unverified) {
+      toast.info("Please verify your email to continue.", {
+        position: "top-right",
+        autoClose: 3000,
+        style: { fontSize: "16px" },
       });
-
-      if (response?.success) {
-        setShowSuccessLoader(true);
-
-
-        const { onboardingStep } = useAuthStore.getState();
-
-        const redirectTo =
-          onboardingStep && onboardingStep !== "complete"
-            ? ONBOARDING_ROUTES[onboardingStep] ?? "/practice-identity"
-            : "/dashboard";
-
-        setTimeout(() => {
-          navigate(redirectTo, {
-            state: {
-              email,  
-            },
-          });
-        }, 1500);
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(message);
+      setTimeout(() => {
+        navigate("/verify-email", { state: { email } });
+      }, 1000);
+      return;
     }
-  };
+
+    if (result?.success) {
+      setShowSuccessLoader(true);
+      const { onboardingStep } = useAuthStore.getState();
+
+      const redirectTo =
+        onboardingStep && onboardingStep !== "complete"
+          ? ONBOARDING_ROUTES[onboardingStep] ?? "/practice-identity"
+          : "/dashboard";
+
+      setTimeout(() => {
+        navigate(redirectTo, { state: { email } });
+      }, 1500);
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Something went wrong";
+    toast.error(message);
+  }
+};
 
   return (
     <Onboarding>

@@ -82,7 +82,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
 
-  // ← axios (no auth needed for public routes)
   register: async (data: RegisterPayload) => {
     set({ isLoading: true });
     try {
@@ -98,7 +97,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // ← axios (no auth needed for public routes)
+ 
   verifyEmail: async (data: VerifyEmailPayload) => {
     set({ isLoading: true });
     try {
@@ -116,7 +115,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // ← axios (no auth needed for public routes)
+
   resendOtp: async (data: ResendOtpPayload) => {
     set({ isLoading: true });
     try {
@@ -129,45 +128,73 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // ← axios (no auth needed for public routes)  
+   
   login: async (data: LoginPayload) => {
-    set({ isLoading: true });
-    try {
-      const response = await axios.post(`${BASE_URL}/auth/login`, data, {
-        withCredentials: true, // ← needed to receive the refresh cookie
-      });
-      const { access_token, user } = response.data;
+  set({ isLoading: true });
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/login`, data, {
+      withCredentials: true,
+    });
+    const { access_token, user } = response.data;
 
-      const onboardingStep = user.onboarding_step || "complete";
+    const onboardingStep = user.onboarding_step || "complete";
 
-      if (onboardingStep !== "complete") {
-        localStorage.setItem("onboarding_step", onboardingStep);
-        if (user.id) localStorage.setItem("onboarding_user_id", user.id);
-        if (user.email) localStorage.setItem("registration_email", user.email);
-      } else {
-        localStorage.removeItem("onboarding_step");
-        localStorage.removeItem("onboarding_user_id");
-        localStorage.removeItem("registration_email");
-      }
-      localStorage.setItem("returning_user", "true");
-      localStorage.setItem("access_token", access_token);
-
-      set({
-        isLoading: false,
-        accessToken: access_token,
-        currentUser: user,
-        isAuthenticated: true,
-        onboardingStep,
-      });
-
-      return true;
-    } catch (error) {
-      set({ isLoading: false });
-      throw new Error(handleApiError(error, "Login failed. Please check your credentials and try again."));
+    if (onboardingStep !== "complete") {
+      localStorage.setItem("onboarding_step", onboardingStep);
+      if (user.id) localStorage.setItem("onboarding_user_id", user.id);
+      if (user.email) localStorage.setItem("registration_email", user.email);
+    } else {
+      localStorage.removeItem("onboarding_step");
+      localStorage.removeItem("onboarding_user_id");
+      localStorage.removeItem("registration_email");
     }
-  },
 
-  // ← api (authenticated, benefits from interceptor + refresh)
+    localStorage.setItem("returning_user", "true");
+    localStorage.setItem("access_token", access_token);
+
+    set({
+      isLoading: false,
+      accessToken: access_token,
+      currentUser: user,
+      isAuthenticated: true,
+      onboardingStep,
+    });
+
+    return true;
+
+  } catch (error) {
+    set({ isLoading: false });
+
+  
+    if (axios.isAxiosError(error) && error.response?.status === 403) {
+      const message =
+        error.response?.data?.error_message ||
+        error.response?.data?.message ||
+        "";
+
+      const isUnverified =
+        message.toLowerCase().includes("verify") ||
+        message.toLowerCase().includes("verified");
+
+      if (isUnverified) {
+       
+        localStorage.setItem("registration_email", data.email.trim().toLowerCase());
+
+        try {
+          await axios.patch(`${BASE_URL}/v1/api/resend_otp`, {
+            email_address: data.email.trim().toLowerCase(),
+          });
+        } catch (otpError) {
+          console.error("Failed to resend OTP:", otpError);
+        }
+
+        return { unverified: true, email: data.email };
+      }
+    }
+
+    throw new Error(handleApiError(error, "Login failed. Please check your credentials and try again."));
+  }
+},
   deleteImage: async (data: CloudinaryPayload) => {
     set({ isLoading: true });
     try {
@@ -180,7 +207,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // ← api (authenticated, benefits from interceptor + refresh)
   registerPracticeIdentity: async (data: RegisterPracticeIdentityPayload) => {
     set({ isLoading: true });
     try {
@@ -194,7 +220,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // ← api (authenticated, benefits from interceptor + refresh)
+  
   registerPracticeDetails: async (data: RegisterPracticeDetailsPayload) => {
     set({ isLoading: true });
     try {
@@ -208,7 +234,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // ← api (authenticated, benefits from interceptor + refresh)
+
   registerComplianceTerms: async (data: RegisterComplianceTermsPayload) => {
     set({ isLoading: true });
     try {
@@ -227,7 +253,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  // ← api (authenticated, benefits from interceptor + refresh)
+ 
   logout: async () => {
     try {
       await api.post(`/auth/logout`);

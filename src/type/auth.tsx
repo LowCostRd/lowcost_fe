@@ -42,8 +42,9 @@ export interface AuthState {
    registerPracticeIdentity: (data: RegisterPracticeIdentityPayload) => Promise<boolean>; 
    registerPracticeDetails: (data: RegisterPracticeDetailsPayload) => Promise<boolean>; 
    registerComplianceTerms: (data: RegisterComplianceTermsPayload) => Promise<boolean>; 
-   login: (data: LoginPayload) => Promise<boolean>;
+   login: (data: LoginPayload) => Promise<true | { unverified: true; email: string }>;
    logout: () => Promise<void>;
+   
 
    
 
@@ -89,7 +90,13 @@ export interface RegisterComplianceTermsHandlerProps {
 
 export interface LoginHandlerProps {
   data: LoginPayload;
-  login: (data: LoginPayload) => Promise<boolean>;
+  login: (data: LoginPayload) => Promise<true | { unverified: true; email: string }>; 
+}
+
+export interface LoginHandlerResult {
+  success?: boolean;
+  unverified?: boolean;
+  email?: string;
 }
 
 export interface User {
