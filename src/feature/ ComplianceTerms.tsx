@@ -9,7 +9,6 @@ import shieldIcon from "../assets/onboarding/shield-security.png";
 import editIcon from "../assets/onboarding/edit-2.png";
 import type { Agreement, StepConfig } from "../type/general";
 import { toast, ToastContainer } from "react-toastify";
-import { useGetStore } from "../store/GetStore";
 import { useAuthStore } from "../store/AuthStore";
 import { handleRegisterComplianceTerms } from "../services/authService";
 import Icons from "../assets/Icons";
@@ -68,9 +67,8 @@ const ComplianceTerms = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { get_user_by_id } = useGetStore();
   const { registerComplianceTerms, isLoading } = useAuthStore();
-  const user_id = location.state?.user_id || "";
+  const user_id = location.state?.user_id || localStorage.getItem("onboarding_user_id") || "";
 
   const toggleCheck = (id: string) => {
     setChecked((prev) => {
@@ -95,14 +93,9 @@ const ComplianceTerms = () => {
     }
 
     try {
-      const user = await get_user_by_id({ id: user_id });
-
-      if (!user || !user._id) {
-        throw new Error("Unable to retrieve user information.");
-      }
-
+    
       const payload = {
-        user_id: user._id,
+        user_id: user_id, 
         business_associate_agreement: checked.has("hipaa"),
         terms_of_service: checked.has("tos"),
         data_processing_agreement: checked.has("dpa"),

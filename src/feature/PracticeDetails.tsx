@@ -7,7 +7,6 @@ import type { StepConfig } from "../type/general";
 import { Link, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
-import { useGetStore } from "../store/GetStore";
 import { useAuthStore } from "../store/AuthStore";
 import { handleRegisterPracticeDetails } from "../services/authService";
 import Icons from "../assets/Icons";
@@ -205,19 +204,17 @@ const STEPS: StepConfig[] = [
 
 const PracticeDetails = () => {
   const location = useLocation();
-  const country: string = location.state?.country || useAuthStore.getState().practiceIdentityForm.country|| "Other";
+  const country: string = location.state?.country || useAuthStore.getState().practiceIdentityForm.country || localStorage.getItem("onboarding_country") || "Other";
 
   
 
   const insurancePlans =
     INSURANCE_PLANS_BY_COUNTRY[country] ?? INSURANCE_PLANS_BY_COUNTRY["Other"];
 
-  const { get_user_by_id } = useGetStore();
   const {registerPracticeDetails,isLoading, practiceDetailsForm, setPracticeDetailsForm,  } = useAuthStore();
 
   const navigate = useNavigate();
-  const user_id = location.state?.user_id || "";
-
+  const user_id = location.state?.user_id || localStorage.getItem("onboarding_user_id") || "";
   const [phone, setPhone] = useState(practiceDetailsForm.main_phone_number);
   const [website, setWebsite] = useState(practiceDetailsForm.website);
   const [practitioners, setPractitioners] = useState(practiceDetailsForm.number_of_practitioners);
@@ -280,22 +277,12 @@ const togglePlan = (plan: string) => {
        
       try{
 
-         const user = await get_user_by_id({ 
-          id: user_id 
-        });
-
-        if (!user || !user._id) {
-        throw new Error("Unable to retrieve user information.");
-      }
-
- 
-
         const payload = {
-          user_id: user._id,
-          main_phone_number: phone,
-         website: website|| "",
-         number_of_practitioners: practitioners,
-        insurance_plans: Array.from(selectedPlans)
+        user_id: user_id, 
+        main_phone_number: phone,
+        website: website || "",
+        number_of_practitioners: practitioners,
+        insurance_plans: Array.from(selectedPlans),
       };
 
          await handleRegisterPracticeDetails({
@@ -319,7 +306,7 @@ const togglePlan = (plan: string) => {
       <Onboarding>
       <ToastContainer />
 
-        <div className="w-full">
+        <div className="w-full mb-20">
           <div className="sticky top-0 z-50">
             <Step steps={STEPS} currentStep={4} />
             <hr className="border-gray-200 w-full" />

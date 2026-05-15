@@ -1,9 +1,9 @@
-import {  useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Onboarding from "../component/Onboarding";
 import Step from "../component/Step";
 import type { StepConfig } from "../type/general";
 import shieldTick from "../assets/onboarding/shield-tick.png";
-import {  useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Icons from "../assets/Icons";
 import { State } from 'country-state-city';
 import Select from "../component/Select";
@@ -39,21 +39,19 @@ const COUNTRY_TO_ISO: Record<string, string> = {
   "United States": "US", "United Kingdom": "GB", "Other": "",
 };
 
-
+const STEPS: StepConfig[] = [
+  { id: 1, label: "Account setup" },
+  { id: 2, label: "Verify email" },
+  { id: 3, label: "Practice identity" },
+  { id: 4, label: "Practice details" },
+  { id: 5, label: "Compliance & terms" },
+];
 
 const PracticeIdentity = () => {
-  const STEPS: StepConfig[] = [
-    { id: 1, label: "Account setup" },
-    { id: 2, label: "Verify email" },
-    { id: 3, label: "Practice identity" },
-    { id: 4, label: "Practice details" },
-    { id: 5, label: "Compliance & terms" },
-  ];
-
   const { get_user_by_email_address } = useGetStore();
-const { registerPracticeIdentity, isLoading, practiceIdentityForm, setPracticeIdentityForm } = useAuthStore();
- const navigate = useNavigate();
-   const location = useLocation();
+  const { registerPracticeIdentity, isLoading, practiceIdentityForm, setPracticeIdentityForm } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [name, setName] = useState(practiceIdentityForm.name);
   const [regNumber, setRegNumber] = useState(practiceIdentityForm.regNumber);
@@ -61,10 +59,12 @@ const { registerPracticeIdentity, isLoading, practiceIdentityForm, setPracticeId
   const [stateValue, setStateValue] = useState(practiceIdentityForm.stateValue);
   const [imageUrl, setImageUrl] = useState(practiceIdentityForm.imageUrl);
   const [imagePublicId, setImagePublicId] = useState(practiceIdentityForm.imagePublicId);
-  const [logoPreview, setLogoPreview] = useState(practiceIdentityForm.imageUrl);
+
+  // ← initialize from saved imageUrl so back button restores the logo
+  const [logoPreview, setLogoPreview] = useState(practiceIdentityForm.imageUrl || "");
+  const [logo, setLogo] = useState<File | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
-  const [logo, setLogo] = useState<File | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -110,60 +110,63 @@ const { registerPracticeIdentity, isLoading, practiceIdentityForm, setPracticeId
     if (file) handleFileChange(file);
   };
 
+  const handleContinue = async () => {
+    const newErrors = {
+      name: name.trim() === "",
+      regNumber: regNumber.trim() === "",
+      country: country === "",
+      state: stateValue.trim() === "",
+    };
 
- 
-const handleContinue = async () => {
-  
- const newErrors = {
-    name: name.trim() === "",
-    regNumber: regNumber.trim() === "",
-    country: country === "",
-    state: stateValue.trim() === "",
-  };
+    setErrors(newErrors);
+    if (Object.values(newErrors).some(Boolean)) return;
 
-  setErrors(newErrors);
+    setPracticeIdentityForm({ name, regNumber, country, stateValue, imageUrl, imagePublicId });
+    localStorage.setItem("onboarding_country", country); // ← persist country for PracticeDetails
 
-  const hasErrors = Object.values(newErrors).some(Boolean);
-  if (hasErrors) return; 
+    const email =
+      location.state?.email ||
+      useAuthStore.getState().registrationForm.email_address ||
+      localStorage.getItem("registration_email");
 
-  setPracticeIdentityForm({ name, regNumber, country, stateValue, imageUrl, imagePublicId });
-  const email = location.state?.email || useAuthStore.getState().registrationForm.email_address;
+    if (!email) {
+      toast.error("User email not found. Please login again.");
+      return;
+    }
 
-  if (!email) {
-    toast.error("User email not found. Please login again.");
-    return;
-  }
+    try {
+    const user = await get_user_by_email_address({ email_address: email });
 
-  try {
-  
-    const user = await get_user_by_email_address({ 
-      email_address: email 
-    });
-
-        if (!user || !user._id) {
+      if (!user || !user._id) {
         throw new Error("Unable to retrieve user information.");
       }
 
-    const payload = {
-      user_id: user._id,
-      name,
-      number: regNumber,
-      country,
-      logo: imageUrl || "",
-      state: stateValue,
-    };
+      localStorage.setItem("onboarding_user_id", user._id);
 
-    await handleRegisterPracticeIdentity({
-      data: payload,
-      register_practice_identity: registerPracticeIdentity,
-      navigate,
-    });
+      const payload = {
+        user_id: user._id,
+        name,
+        number: regNumber,
+        country,
+        logo: imageUrl || "",
+        state: stateValue,
+      };
 
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Something went wrong";
-    toast.error(message);
-  }
-};
+
+
+     
+
+      await handleRegisterPracticeIdentity({
+        data: payload,
+        register_practice_identity: registerPracticeIdentity,
+        navigate,
+      });
+
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(message);
+    }
+  };
 
   const isFormComplete =
     name.trim() !== "" &&
@@ -173,16 +176,11 @@ const handleContinue = async () => {
 
   const deleteImage = useAuthStore((state) => state.deleteImage);
 
-  const handleDeleteClick = () => {
-    setShowDeleteModal(true);
-  };
+  const handleDeleteClick = () => setShowDeleteModal(true);
 
   const confirmDelete = async () => {
     setIsDeleting(true);
-
-    const toastId = toast.loading("Deleting logo...", {
-      style: { fontSize: "14px" },
-    });
+    const toastId = toast.loading("Deleting logo...", { style: { fontSize: "14px" } });
 
     try {
       if (imagePublicId) {
@@ -201,14 +199,11 @@ const handleContinue = async () => {
       setLogoPreview("");
       setImageUrl("");
       setImagePublicId("");
+      setPracticeIdentityForm({ imageUrl: "", imagePublicId: "" });
       if (fileInputRef.current) fileInputRef.current.value = "";
 
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to delete logo. Please try again.";
-
+      const message = err instanceof Error ? err.message : "Failed to delete logo. Please try again.";
       toast.update(toastId, {
         render: message,
         type: "error",
@@ -222,9 +217,7 @@ const handleContinue = async () => {
     }
   };
 
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-  };
+  const cancelDelete = () => setShowDeleteModal(false);
 
   return (
     <div>
@@ -347,7 +340,7 @@ const handleContinue = async () => {
               )}
             </div>
 
-         
+            {/* Logo upload */}
             <div className="mb-8">
               <label className="block text-[14px] font-semibold text-[#1F2937]">
                 Practice logo <span className="font-normal">(optional)</span>
@@ -357,7 +350,8 @@ const handleContinue = async () => {
                 PNG, JPG or SVG, max 5MB.
               </p>
 
-              {logo ? (
+              {/* ← show if File exists OR if we have a saved imageUrl from before */}
+              {logo || logoPreview ? (
                 <div className="flex items-center gap-4 px-5 py-4">
                   <div className="relative w-30 h-30 shrink-0">
                     <img src={logoPreview} alt="logo preview" className="w-full h-full object-cover rounded-md" />
@@ -368,11 +362,19 @@ const handleContinue = async () => {
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-[14px] font-medium text-[#1F2937]">{logo.name}</p>
-                    <div className="mt-1">
-                      <p className="text-[12px] text-[#6B7280]">File type: {logo.type.split("/")[1]}</p>
-                      <p className="text-[12px] text-[#6B7280]">File size: {Math.round(logo.size / 1024)}kb</p>
-                    </div>
+                    {logo ? (
+                      // File object available — show file details
+                      <>
+                        <p className="text-[14px] font-medium text-[#1F2937]">{logo.name}</p>
+                        <div className="mt-1">
+                          <p className="text-[12px] text-[#6B7280]">File type: {logo.type.split("/")[1]}</p>
+                          <p className="text-[12px] text-[#6B7280]">File size: {Math.round(logo.size / 1024)}kb</p>
+                        </div>
+                      </>
+                    ) : (
+                      // Resumed session — File object gone but URL is saved
+                      <p className="text-[14px] font-medium text-[#1F2937]">Uploaded logo</p>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -419,22 +421,19 @@ const handleContinue = async () => {
 
             {/* Actions */}
             <div className="flex gap-3 mb-20">
-          
               <button
                 onClick={handleContinue}
                 disabled={isUploading}
                 className={`flex-1 h-16.5 font-semibold rounded-lg text-[14px] text-white transition
                   ${isFormComplete && !isUploading ? "bg-[#5B0AFF] cursor-pointer" : "bg-[#9B6AFF] cursor-pointer"}`}
               >
-                   {isLoading ? (Icons.SpinningIcon) : "Continue"}
-             
+                {isLoading ? Icons.SpinningIcon : "Continue"}
               </button>
             </div>
           </div>
         </div>
       </Onboarding>
 
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={showDeleteModal}
         onClose={cancelDelete}

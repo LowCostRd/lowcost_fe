@@ -32,7 +32,8 @@ const VerifyEmail = () => {
   const { registrationForm } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
-  const email = location.state?.email || registrationForm.email_address;
+  const email = location.state?.email || registrationForm.email_address ||  localStorage.getItem("registration_email");
+  
 
   const { verifyEmail, isLoading: storeLoading } = useAuthStore();
     const { resendOtp } = useAuthStore();
