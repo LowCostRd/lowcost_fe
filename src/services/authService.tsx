@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import type { RegisterHandlerProps, VerifyEmailHandlerProps,ResendOtpHandlerProps, RegisterPracticeIdentityHandlerProps, RegisterPracticeDetailsHandlerProps, RegisterComplianceTermsHandlerProps } from "../type/auth";
+import type { RegisterHandlerProps, VerifyEmailHandlerProps,ResendOtpHandlerProps, RegisterPracticeIdentityHandlerProps, RegisterPracticeDetailsHandlerProps, RegisterComplianceTermsHandlerProps, LoginHandlerProps, LoginHandlerResult } from "../type/auth";
 
 
 
@@ -20,9 +20,10 @@ export const handleRegister = async ({
       }
     );
 
-    navigate("/verify-email", {
+             setTimeout(() =>
+     navigate("/verify-email", {
       state: { email: data.email_address },
-    });
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -57,8 +58,9 @@ export const handleEmailVerification = async ({
       }
     );
 
-    navigate("/practice-identity", {
-      state: { email: data.email_address},
+
+      navigate("/practice-identity", {
+      state: { email: data.email_address },
     });
 
   } catch (error: unknown) {
@@ -74,6 +76,7 @@ export const handleEmailVerification = async ({
     });
   }
 };
+
 export const handleResendOtp = async ({
   data,
   resendOtp,
@@ -99,9 +102,11 @@ export const handleRegisterPracticeIdentity = async ({
       }
     );
 
-    navigate("/practice-details", {
+
+         setTimeout(() =>
+      navigate("/practice-details", {
       state: { user_id : data.user_id , country : data.country},
-    });
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -136,9 +141,11 @@ export const handleRegisterPracticeDetails = async ({
       }
     );
 
+        
+     setTimeout(() =>
     navigate("/compliance-terms", {
       state: { user_id : data.user_id},
-    });
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -173,9 +180,10 @@ export const handleRegisterComplianceTerms = async ({
       }
     );
 
-    navigate("/dashboard", {
+    
+     setTimeout(() =>navigate("/dashboard", {
       state: { user_id : data.user_id},
-    });
+    }), 1000);
 
   } catch (error: unknown) {
     const message =
@@ -188,5 +196,40 @@ export const handleRegisterComplianceTerms = async ({
       autoClose: 4000,
       style: { fontSize: "16px" },
     });
+  }
+};
+
+export const handleLogin = async ({
+  data,
+  login,
+}: LoginHandlerProps): Promise<LoginHandlerResult> => {
+  try {
+    const result = await login(data);
+
+    if (result && typeof result === "object" && "unverified" in result) {
+      return { unverified: true, email: result.email };
+    }
+
+    toast.success("Login successful!", {
+      position: "top-right",
+      autoClose: 4000,
+      style: { fontSize: "16px" },
+    });
+
+    return { success: true };
+
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Login failed. Please check your credentials and try again.";
+
+    toast.error(message, {
+      position: "top-right",
+      autoClose: 4000,
+      style: { fontSize: "16px" },
+    });
+
+    return { success: false };
   }
 };
