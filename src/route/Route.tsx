@@ -19,19 +19,19 @@ import SignUp from "../feature/SignUp";
 import VerifyEmail from "../feature/VerifyEmail";
 import { Navigate } from "react-router-dom";
 import ProtectedRoute from "../component/ProtectedRoute";
+import { RootRedirect } from "../component/RootRedirect";
 
 
-const isReturningUser = localStorage.getItem("returning_user") === "true";
+
+
 
 export const Route = [
-  // ── Public routes ──────────────────────────────────────────────
 
-  {
-   
-    path: "/",
-    element: isReturningUser ? <Navigate to="/signin" replace /> : <SignUp />,
 
-  },
+{
+  path: "/",
+  element: <RootRedirect />,
+},
   {
     path : "/signup",
     element: <SignUp />,

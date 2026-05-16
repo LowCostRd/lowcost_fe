@@ -12,12 +12,17 @@
   display: flex;
   flex-direction: column;
   flex: 0 0 45%;
-   position: sticky; 
-    top: 0;          
-    height: 100vh;   
-  overflow-y: auto;     
-  overflow-x: hidden;    
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex-shrink: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.onboarding-wrapper .onboarding-box-wrapper::-webkit-scrollbar {
+  display: none;
 }
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-logo-box {
   display: flex;
@@ -48,12 +53,11 @@
   font-weight: 600;
   color: #1f2937;
   line-height: 4rem;
-} 
-
+}
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-top .top-content-body-text {
   color: #6b7280;
   font-size: 16px;
-} 
+}
 .onboarding-wrapper .onboarding-box-wrapper .onboarding-content-box .onboarding-content-bottom {
   background-image: url("../../assets/onboarding/Group (10).png");
   background-size: contain;
@@ -79,25 +83,26 @@
   background-color: #e0e0e0;
   color: #333;
 }
-
 .btn--primary {
-  background-color: #5B0AFF;
+  background-color: #5b0aff;
   color: #fff;
 }
-
 .btn--danger {
   background-color: #e74c3c;
   color: #fff;
 }
-/*# sourceMappingURL=style.css.map */
-
 .btn--unfilled {
-  background-color: #9B6AFF;
-  cursor: pointer; 
+  background-color: #9b6aff;
+  cursor: pointer;
 }
 
 .onboarding-scroll-container {
   flex: 1;
   height: 100vh;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.onboarding-scroll-container::-webkit-scrollbar {
+  display: none;
 }
