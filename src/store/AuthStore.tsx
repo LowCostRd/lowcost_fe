@@ -26,6 +26,7 @@ const handleApiError = (error: unknown, defaultMessage: string): string => {
 const savedIdentity = localStorage.getItem("onboarding_practice_identity");
 const savedDetails = localStorage.getItem("onboarding_practice_details");
 
+
 export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
   accessToken: localStorage.getItem("access_token") || null,
