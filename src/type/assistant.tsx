@@ -68,6 +68,49 @@ export interface AgentState {
   updateAgentSpecialty: (agentId: string, specialty: string) => Promise<void>;
   setAgent: (data: { agentId: string; agentName: string; agentSpecialty?: string }) => void;
   clearAgent: () => void;
+  voices: ElevenLabsVoice[];
+  isLoadingVoices: boolean;
+  agentVoiceId: string | null;
+  fetchVoices: () => Promise<void>;
+  updateAgentVoice: (agentId: string, voiceId: string) => Promise<void>;
+  updateAgentRoles: (agentId: string, payload: UpdateRolesPayload) => Promise<UpdateRolesResponse["message"]>;
+
+}
+
+export interface ElevenLabsVoice {
+  voice_id: string;
+  name: string;
+  preview_url: string;
+  labels: Record<string, string>;
+}
+
+export interface GetVoicesResponse {
+  success: boolean;
+  message: ElevenLabsVoice[];
+  status_code: number;
+  timestamp: string;
+}
+
+export interface AgentRole {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface UpdateRolesPayload {
+  first_message: string;
+  roles: AgentRole[];
+}
+
+export interface UpdateRolesResponse {
+  success: boolean;
+  message: {
+    success: boolean;
+    agent_id: string;
+    roles_applied: string[];
+  };
+  status_code: number;
+  timestamp: string;
 }
 
 
