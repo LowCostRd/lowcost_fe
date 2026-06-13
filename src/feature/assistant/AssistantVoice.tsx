@@ -1,32 +1,32 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import Step from "../../component/Step";
 import StepProgress from "../../component/StepProgress";
 import type { StepConfig } from "../../type/general";
 import type { Specialty } from "../../type/assistant";
+import { useAgentStore } from "../../store/AssistantStore";
+import Icons from "../../assets/Icons";
+
 import evelynIcon from "../../assets/assistant/voice/dp.png";
 import michealIcon from "../../assets/assistant/voice/Mask group (22).png";
 import williamIcon from "../../assets/assistant/voice/Mask group (23).png";
 import mannyIcon from "../../assets/assistant/voice/dp (1).png";
 import liamIcon from "../../assets/assistant/voice/Mask group (24).png";
-import sandraIcon from "../../assets/assistant/voice/Mask group (25).png"
+import sandraIcon from "../../assets/assistant/voice/Mask group (25).png";
+
+const AVATARS = [evelynIcon, michealIcon,williamIcon, mannyIcon, liamIcon,sandraIcon];
+
+const GENDER_PATTERN = ["female", "male", "male", "female", "male", "female"];
 
 interface Voice {
   id: string;
   name: string;
-  gender: "Female" | "Male";
+  gender: string;
   description: string;
   avatar: string;
+  previewUrl: string;
 }
-
-const VOICES: Voice[] = [
-  { id: "evelyn", name: "Evelyn AI", gender: "Female", description: "Warm and friendly", avatar: evelynIcon },
-  { id: "michael", name: "Michael AI", gender: "Male", description: "Professional and clear", avatar: michealIcon},
-  { id: "william", name: "William AI", gender: "Male", description: "Calm and reassuring", avatar: williamIcon },
-  { id: "manny", name: "Manny AI", gender: "Female", description: "Soft and empathetic", avatar: mannyIcon },
-  { id: "liam", name: "Liam AI", gender: "Male", description: "Confident and authoritative", avatar: liamIcon},
-  { id: "sandra", name: "Sandra AI", gender: "Female", description: "Energetic and upbeat", avatar: sandraIcon },
-];
 
 const STEPS: StepConfig[] = [
   { id: 1, label: "Name your Assistant" },
@@ -34,34 +34,177 @@ const STEPS: StepConfig[] = [
   { id: 3, label: "Assistant Roles" },
 ];
 
+const formatGender = (g?: string) => {
+  if (!g) return "Neutral";
+  return g.charAt(0).toUpperCase() + g.slice(1);
+};
+
 const AssistantVoice = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [selectedVoice, setSelectedVoice] = useState<string>("evelyn");
+  const {
+    voices,
+    isLoadingVoices,
+    fetchVoices,
+    agentId,
+    agentVoiceId,
+    updateAgentVoice,
+    isLoading,
+  } = useAgentStore();
+
+  const [selectedVoice, setSelectedVoice] = useState<string>(agentVoiceId || "");
   const [showAll, setShowAll] = useState(false);
+  const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
+  const [loadingVoiceId, setLoadingVoiceId] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const specialty = location.state?.specialty as Specialty | undefined;
   const assistantName = location.state?.assistantName as string || "Assistant";
 
-  const displayTitle = specialty 
+  const displayTitle = specialty
     ? `Let's Set Up Your ${specialty.title} Assistant`
     : `Let's Set Up Your ${assistantName}`;
 
-  const visibleVoices = showAll ? VOICES : VOICES.slice(0, 3);
+  // Fetch voices on mount
+  useEffect(() => {
+    fetchVoices().catch((err) => {
+      const message = err instanceof Error ? err.message : "Failed to load voices";
+      toast.error(message);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleNext = () => {
-    navigate("/my-assistants/setup/role", { 
-      state: { ...location.state, selectedVoice } 
+  // Stop audio on unmount
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+    };
+  }, []);
+
+  const mappedVoices: Voice[] = (() => {
+    const pool = [...voices];
+    const ordered: typeof voices = [];
+
+    // Pick voices following the female, male, male, female, male, female pattern
+    for (const gender of GENDER_PATTERN) {
+      const idx = pool.findIndex(
+        (v) => (v.labels?.gender || "").toLowerCase() === gender
+      );
+      if (idx !== -1) {
+        ordered.push(pool.splice(idx, 1)[0]);
+      }
+    }
+
+    // Append any remaining voices afterwards, in original order
+    ordered.push(...pool);
+
+    return ordered.map((v, i) => {
+      const [namePart, descPart] = v.name.split(" - ");
+      const baseName = namePart?.trim() || v.name;
+      return {
+        id: v.voice_id,
+        name: `${baseName} AI`,
+        gender: formatGender(v.labels?.gender),
+        description: descPart?.trim() || v.labels?.descriptive || v.labels?.use_case || "AI voice",
+        avatar: AVATARS[i % AVATARS.length],
+        previewUrl: v.preview_url,
+      };
+    });
+  })();
+
+  const visibleVoices = showAll ? mappedVoices.slice(0, 6) : mappedVoices.slice(0, 3);
+
+  const handlePlayAudio = (voice: Voice) => {
+    // Toggle off if already playing this voice
+    if (playingVoiceId === voice.id) {
+      audioRef.current?.pause();
+      setPlayingVoiceId(null);
+      return;
+    }
+
+    // Cancel if currently loading this same voice (double click)
+    if (loadingVoiceId === voice.id) return;
+
+    // Stop any currently playing/loading audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    setPlayingVoiceId(null);
+
+    if (!voice.previewUrl) {
+      toast.error("Preview not available for this voice.");
+      return;
+    }
+
+    setLoadingVoiceId(voice.id);
+
+    const audio = new Audio(voice.previewUrl);
+    audioRef.current = audio;
+
+    audio.oncanplay = () => {
+      setLoadingVoiceId(null);
+      setPlayingVoiceId(voice.id);
+    };
+
+    audio.onended = () => setPlayingVoiceId(null);
+
+    audio.onerror = () => {
+      toast.error("Couldn't play preview for this voice.");
+      setLoadingVoiceId(null);
+      setPlayingVoiceId(null);
+    };
+
+    audio.play().catch(() => {
+      toast.error("Couldn't play preview for this voice.");
+      setLoadingVoiceId(null);
+      setPlayingVoiceId(null);
     });
   };
 
-  const handlePlayAudio = (voiceId: string) => {
-    console.log(`Playing preview for: ${voiceId}`);
+  const handleNext = async () => {
+    if (!selectedVoice) {
+      toast.error("Please select a voice.");
+      return;
+    }
+
+    if (!agentId) {
+      toast.error("Assistant not found. Please go back and try again.");
+      return;
+    }
+
+    // Skip API call if voice unchanged
+    if (agentVoiceId === selectedVoice) {
+      navigate("/my-assistants/setup/role", {
+        state: { ...location.state, selectedVoice },
+      });
+      return;
+    }
+
+    try {
+      await updateAgentVoice(agentId, selectedVoice);
+
+      toast.success("Voice updated successfully!", {
+        position: "top-right",
+        autoClose: 4000,
+        style: { fontSize: "16px" },
+      });
+
+          setTimeout(() => {              // ← add this
+      navigate("/my-assistants/setup/role", {
+        state: { ...location.state, selectedVoice },
+      });
+    }, 1000);   
+    
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(message);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
+      <ToastContainer />
       {/* ── Step Progress Bar ── */}
       <div className="sticky top-0 z-50 bg-white">
         <div className="py-5">
@@ -91,93 +234,121 @@ const AssistantVoice = () => {
         <div className="w-full max-w-200">
           <label className="block text-[#1F2937] font-semibold text-[16px] mb-6">Choose a voice for your assistant</label>
 
-          <div className="space-y-4 mb-8">
-            {visibleVoices.map((voice) => (
-              <div
-                key={voice.id}
-                onClick={() => setSelectedVoice(voice.id)}
-                className={`relative flex items-center p-6 rounded-2xl border cursor-pointer transition-all duration-200 ${
-                  selectedVoice === voice.id 
-                    ? "border-[#5B0AFF] bg-[#F5F3FF] shadow-[0_0_10px_-2px_rgba(111,66,239,0.4)]" 
-                    : "border-[#94A3B8] bg-white "
-                }`}
-              >
-                <img src={voice.avatar} alt={voice.name} className="w-20 h-20 rounded-full object-cover mr-5" />
-                
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="font-semibold text-[#1F2937] text-[16px]">{voice.name}</h3>
-                    <span className="text-[11px] w-20 text-center  rounded-full bg-[#F3EDFF] text-[#5B0AFF] font-medium  ">
-                      {voice.gender}
-                    </span>
-                  </div>
-                  <p className="text-[#6B7280] text-[15px] font-normal">{voice.description}</p>
-                </div>
+          {isLoadingVoices ? (
+            <div className="flex items-center justify-center py-20">
+              {Icons.SpinningIcon}
+            </div>
+          ) : (
+            <div className="space-y-4 mb-8">
+              {visibleVoices.map((voice) => (
+                <div
+                  key={voice.id}
+                  onClick={() => setSelectedVoice(voice.id)}
+                  className={`relative flex items-center p-6 rounded-2xl border cursor-pointer transition-all duration-200 ${
+                    selectedVoice === voice.id
+                      ? "border-[#5B0AFF] bg-[#F5F3FF] shadow-[0_0_10px_-2px_rgba(111,66,239,0.4)]"
+                      : "border-[#94A3B8] bg-white "
+                  }`}
+                >
+                  <img src={voice.avatar} alt={voice.name} className="w-20 h-20 rounded-full object-cover mr-5" />
 
-                {/* Speaker + Tooltip Container */}
-                <div className="relative group/tooltip">
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black text-white text-[12px] py-1.5 px-3 rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-                    Listen
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-black"></div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h3 className="font-semibold text-[#1F2937] text-[16px]">{voice.name}</h3>
+                      <span className="text-[11px] w-20 text-center rounded-full bg-[#F3EDFF] text-[#5B0AFF] font-medium">
+                        {voice.gender}
+                      </span>
+                    </div>
+                    <p className="text-[#6B7280] text-[15px] font-normal">{voice.description}</p>
                   </div>
 
-                  <button
-                    onClick={() => handlePlayAudio(voice.id)}
-                    className={`p-3 rounded-full transition-all border cursor-pointer ${
-                      selectedVoice === voice.id 
-                      ? "bg-[#5B0AFF] border-[#5B0AFF] text-white shadow-md" 
-                      : "bg-white border-gray-200 text-[#6B7280] hover:bg-gray-50"
-                    }`}
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 9.99979V13.9998C2 15.9998 3 16.9998 5 16.9998H6.43C6.8 16.9998 7.17 17.1098 7.49 17.2998L10.41 19.1298C12.93 20.7098 15 19.5598 15 16.5898V7.40979C15 4.42979 12.93 3.28979 10.41 4.86979L7.49 6.69979C7.17 6.88979 6.8 6.99979 6.43 6.99979H5C3 6.99979 2 7.99979 2 9.99979Z" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M18 8C19.78 10.37 19.78 13.63 18 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M19.8281 5.5C22.7181 9.35 22.7181 14.65 19.8281 18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                  {/* Speaker + Tooltip Container */}
+                  <div className="relative group/tooltip">
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black text-white text-[12px] py-1.5 px-3 rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
+                      {loadingVoiceId === voice.id ? "Loading..." : playingVoiceId === voice.id ? "Pause" : "Listen"}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-black"></div>
+                    </div>
 
-                  </button>
+                    {/* Loading spinner ring */}
+                    {loadingVoiceId === voice.id && (
+                      <div className="absolute -inset-1.5 rounded-full border-2 border-[#5B0AFF] border-t-transparent animate-spin pointer-events-none" />
+                    )}
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePlayAudio(voice);
+                      }}
+                      disabled={loadingVoiceId === voice.id}
+                      className={`p-3 rounded-full transition-all border cursor-pointer ${
+                        selectedVoice === voice.id
+                          ? "bg-[#5B0AFF] border-[#5B0AFF] text-white shadow-md"
+                          : "bg-white border-gray-200 text-[#6B7280] hover:bg-gray-50"
+                      }`}
+                    >
+                      {playingVoiceId === voice.id ? (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" />
+                          <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" />
+                        </svg>
+                      ) : (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M2 9.99979V13.9998C2 15.9998 3 16.9998 5 16.9998H6.43C6.8 16.9998 7.17 17.1098 7.49 17.2998L10.41 19.1298C12.93 20.7098 15 19.5598 15 16.5898V7.40979C15 4.42979 12.93 3.28979 10.41 4.86979L7.49 6.69979C7.17 6.88979 6.8 6.99979 6.43 6.99979H5C3 6.99979 2 7.99979 2 9.99979Z" stroke="currentColor" strokeWidth="1.5"/>
+                          <path d="M18 8C19.78 10.37 19.78 13.63 18 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M19.8281 5.5C22.7181 9.35 22.7181 14.65 19.8281 18.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Hint Message */}
           <div className="bg-[#F5F3FF] rounded-full py-4 px-12 flex items-center gap-3 mb-8">
-            <div className=" p-1  flex items-center justify-center">
-             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14.1641 15.3588H10.8307L7.12239 17.8254C6.57239 18.1921 5.83073 17.8004 5.83073 17.1338V15.3588C3.33073 15.3588 1.66406 13.6921 1.66406 11.1921V6.19206C1.66406 3.69206 3.33073 2.02539 5.83073 2.02539H14.1641C16.6641 2.02539 18.3307 3.69206 18.3307 6.19206V11.1921C18.3307 13.6921 16.6641 15.3588 14.1641 15.3588Z" stroke="#220068" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M10.0005 9.4668V9.29183C10.0005 8.72516 10.3505 8.42515 10.7005 8.18348C11.0422 7.95015 11.3838 7.65016 11.3838 7.10016C11.3838 6.33349 10.7672 5.7168 10.0005 5.7168C9.23383 5.7168 8.61719 6.33349 8.61719 7.10016" stroke="#220068" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9.99885 11.4577H10.0064" stroke="#220068" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-
+            <div className="p-1 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.1641 15.3588H10.8307L7.12239 17.8254C6.57239 18.1921 5.83073 17.8004 5.83073 17.1338V15.3588C3.33073 15.3588 1.66406 13.6921 1.66406 11.1921V6.19206C1.66406 3.69206 3.33073 2.02539 5.83073 2.02539H14.1641C16.6641 2.02539 18.3307 3.69206 18.3307 6.19206V11.1921C18.3307 13.6921 16.6641 15.3588 14.1641 15.3588Z" stroke="#220068" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M10.0005 9.4668V9.29183C10.0005 8.72516 10.3505 8.42515 10.7005 8.18348C11.0422 7.95015 11.3838 7.65016 11.3838 7.10016C11.3838 6.33349 10.7672 5.7168 10.0005 5.7168C9.23383 5.7168 8.61719 6.33349 8.61719 7.10016" stroke="#220068" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9.99885 11.4577H10.0064" stroke="#220068" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
             <p className="text-[#220068] text-[14px] font-medium tracking-tight">Click the speaker icon to hear each voice</p>
           </div>
 
           {/* See More Toggle */}
-          <div className="relative flex items-center justify-end mb-12">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#E5E7EB]"></div>
-            </div>
-            <button 
-              onClick={() => setShowAll(!showAll)}
-              className="relative bg-white px-6 text-[#6B7280] text-[14px] font-normal  flex items-center gap-2 cursor-pointer transition-colors"
-            >
-              Show {showAll ? "Less" : "3 More"} Voices
-              <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg"
-              className={`transition-transform duration-300 ${showAll ? "rotate-180" : ""}`}
+          {mappedVoices.length > 3 && (
+            <div className="relative flex items-center justify-end mb-12">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[#E5E7EB]"></div>
+              </div>
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="relative bg-white px-6 text-[#6B7280] text-[14px] font-normal flex items-center gap-2 cursor-pointer transition-colors"
               >
-                <path d="M14.1106 6.37495L9.49229 10.9933C8.94688 11.5387 8.05438 11.5387 7.50896 10.9933L2.89063 6.37495" stroke="#6B7280" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                Show {showAll ? "Less" : "3 More"} Voices
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  className={`transition-transform duration-300 ${showAll ? "rotate-180" : ""}`}
+                >
+                  <path d="M14.1106 6.37495L9.49229 10.9933C8.94688 11.5387 8.05438 11.5387 7.50896 10.9933L2.89063 6.37495" stroke="#6B7280" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-
-            </button>
-          </div>
+              </button>
+            </div>
+          )}
 
           <button
             onClick={handleNext}
-            className="w-full py-4 rounded-xl bg-[#5B0AFF]  text-white font-semibold text-[15px] transition-all cursor-pointer mb-12 "
+            disabled={!selectedVoice || isLoading}
+            className="w-full py-4 rounded-xl bg-[#5B0AFF] text-white font-semibold text-[15px] transition-all cursor-pointer mb-12 flex items-center justify-center min-h-[52px] disabled:opacity-70"
           >
-            Next
+            {isLoading ? (
+              <span className="inline-flex items-center justify-center w-5 h-5">
+                {Icons.SpinningIcon}
+              </span>
+            ) : (
+              "Next"
+            )}
           </button>
         </div>
       </div>
