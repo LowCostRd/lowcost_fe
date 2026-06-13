@@ -27,6 +27,92 @@ import globe from "../assets/assistant/roles/⚗️.png";
 import time from "../assets/assistant/roles/🕐.png";
 import van from "../assets/assistant/roles/🚚.png"
 
+export interface CreateAgentHandlerProps {
+  data: CreateAgentPayload;
+  createAgent: (data: CreateAgentPayload) => Promise<string>;
+  navigate: (path: string, options?: { state?: Record<string, unknown> }) => void;
+}
+
+export interface CreateAgentPayload {
+  name: string;
+  specialty: string;
+}
+
+export interface CreateAgentResponse {
+  success: boolean;
+  message: {
+    agent_id: string;
+  };
+  status_code: number;
+  timestamp: string;
+}
+
+export interface UpdateNameResponse {
+  success: boolean;
+  message: {
+    success: boolean;
+    agent_id: string;
+  };
+  status_code: number;
+  timestamp: string;
+}
+
+
+export interface AgentState {
+  isLoading: boolean;
+  agentId: string | null;
+  agentName: string | null;
+  agentSpecialty: string | null;
+  createAgent: (data: CreateAgentPayload) => Promise<string>;
+  updateAgentName: (agentId: string, name: string) => Promise<void>;
+  updateAgentSpecialty: (agentId: string, specialty: string) => Promise<void>;
+  setAgent: (data: { agentId: string; agentName: string; agentSpecialty?: string }) => void;
+  clearAgent: () => void;
+  voices: ElevenLabsVoice[];
+  isLoadingVoices: boolean;
+  agentVoiceId: string | null;
+  fetchVoices: () => Promise<void>;
+  updateAgentVoice: (agentId: string, voiceId: string) => Promise<void>;
+  updateAgentRoles: (agentId: string, payload: UpdateRolesPayload) => Promise<UpdateRolesResponse["message"]>;
+
+}
+
+export interface ElevenLabsVoice {
+  voice_id: string;
+  name: string;
+  preview_url: string;
+  labels: Record<string, string>;
+}
+
+export interface GetVoicesResponse {
+  success: boolean;
+  message: ElevenLabsVoice[];
+  status_code: number;
+  timestamp: string;
+}
+
+export interface AgentRole {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface UpdateRolesPayload {
+  first_message: string;
+  roles: AgentRole[];
+}
+
+export interface UpdateRolesResponse {
+  success: boolean;
+  message: {
+    success: boolean;
+    agent_id: string;
+    roles_applied: string[];
+  };
+  status_code: number;
+  timestamp: string;
+}
+
 
 export interface StepProgressProps {
   currentStep: number;
@@ -72,6 +158,7 @@ export interface Role {
   icon: string;
   locked?: boolean;
 }
+
 
 
 export const SPECIALTY_ROLES: Record<string, Role[]> = {
@@ -201,3 +288,4 @@ export const SPECIALTY_ROLES: Record<string, Role[]> = {
     { id: "emergency_routing", title: "Emergency call routing",       description: "Immediately escalate urgent pediatric emergencies to staff",             icon: reshare },
   ],
 };
+
