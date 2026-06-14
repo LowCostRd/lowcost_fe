@@ -190,12 +190,12 @@ const AssistantVoice = () => {
         style: { fontSize: "16px" },
       });
 
-          setTimeout(() => {              // ← add this
+          setTimeout(() => {              
       navigate("/my-assistants/setup/role", {
         state: { ...location.state, selectedVoice },
       });
     }, 1000);   
-    
+
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong";
       toast.error(message);

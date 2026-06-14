@@ -20,6 +20,7 @@ import VerifyEmail from "../feature/VerifyEmail";
 import { Navigate } from "react-router-dom";
 import ProtectedRoute from "../component/ProtectedRoute";
 import { RootRedirect } from "../component/RootRedirect";
+import AssistantDashboard from "../component/AssistantDashboard";
 
 
 
@@ -78,6 +79,10 @@ export const Route = [
       { path: "ehr-integrations",          element: <EHRIntegrationsPage /> },
       { path: "settings",                  element: <SettingsPage /> },
       { path: "help",                      element: <HelpPage /> },
+      {
+        path: "my-assistants/view",
+        element: <AssistantDashboard />
+      }
     ],
   },
 
@@ -94,6 +99,7 @@ export const Route = [
     path: "/my-assistants/setup/role",
     element: <ProtectedRoute><AssistantRole /></ProtectedRoute>,
   },
+ 
 
   // ── Catch-all ──────────────────────────────────────────────────
   {

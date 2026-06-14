@@ -143,6 +143,57 @@ switzerlandIcon : switzerlandIcon,
 uaeIcon : uaeIcon,
 ukIcon : ukIcon,
 deleteIcon : deleteIcon,
-uploadIcon : downloadIcon
+uploadIcon : downloadIcon,
+search: (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <circle cx="11" cy="11" r="7" />
+    <path d="M21 21l-4.35-4.35" strokeLinecap="round" />
+  </svg>
+),
+filter: (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 7h14" />
+    <circle cx="9" cy="7" r="1.8" fill="currentColor" stroke="none" />
+    <path d="M5 12h14" />
+    <circle cx="15" cy="12" r="1.8" fill="currentColor" stroke="none" />
+    <path d="M5 17h14" />
+    <circle cx="11" cy="17" r="1.8" fill="currentColor" stroke="none" />
+  </svg>
+),
+chevron: (
+  <svg width="14" height="14" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M14.1106 6.37495L9.49229 10.9933C8.94688 11.5387 8.05438 11.5387 7.50896 10.9933L2.89063 6.37495"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeMiterlimit="10"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+),
+person: (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <circle cx="12" cy="8" r="3.5" />
+    <path d="M4.5 20c0-3.6 3.36-6 7.5-6s7.5 2.4 7.5 6" strokeLinecap="round" />
+  </svg>
+),
+team: (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+    <path d="M7 7L12 12M17 7L12 12M7 17L12 12M17 17L12 12" />
+    <circle cx="7" cy="7" r="1.6" fill="currentColor" stroke="none" />
+    <circle cx="17" cy="7" r="1.6" fill="currentColor" stroke="none" />
+    <circle cx="7" cy="17" r="1.6" fill="currentColor" stroke="none" />
+    <circle cx="17" cy="17" r="1.6" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
+  </svg>
+),
+dots: (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="5" cy="12" r="1.7" />
+    <circle cx="12" cy="12" r="1.7" />
+    <circle cx="19" cy="12" r="1.7" />
+  </svg>
+),
 };
 export default Icons;
