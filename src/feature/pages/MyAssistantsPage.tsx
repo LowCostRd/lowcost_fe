@@ -6,7 +6,7 @@ const MyAssistantsPage = () => {
   
     // if (isLoading) return <Loader />;
 
-    const assistants = []
+    const assistants = ["t"]
   
     return assistants?.length > 0 ? (
       <AssistantDashboard />
