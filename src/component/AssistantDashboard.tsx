@@ -2,10 +2,14 @@ import { useState } from "react";
 import AssistantsView from "./AssistantsView";
 import TeamsView from "./TeamsView";
 import Icons from "../assets/Icons";
+import { useNavigate } from "react-router";
+import { useUIStore } from "../store/UseUIStore";
 
 const AssistantDashboard = () => {
-  const [activeTab, setActiveTab] = useState("assistants");
+    const { assistantActiveTab, setAssistantActiveTab } = useUIStore();
   const [showCreateMenu, setShowCreateMenu] = useState(false);
+
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen  bg-[#F8F8F8] font-sans p-6">
@@ -15,9 +19,9 @@ const AssistantDashboard = () => {
           {/* Tabs */}
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setActiveTab("assistants")}
+                onClick={() => setAssistantActiveTab("assistants")} 
               className={`px-9 py-3 rounded-full font-medium text-[14px] cursor-pointer transition-all ${
-                activeTab === "assistants"
+                assistantActiveTab === "assistants"
                   ? "bg-[#F2EBFF] text-[#5B0AFF] border-[#5B0AFF] border"
                   : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB]"
               }`}
@@ -25,9 +29,9 @@ const AssistantDashboard = () => {
               Assistants
             </button>
             <button
-              onClick={() => setActiveTab("teams")}
+                  onClick={() => setAssistantActiveTab("teams")}
               className={`px-9 py-3 rounded-full font-medium text-[14px] cursor-pointer transition-all ${
-                activeTab === "teams"
+                assistantActiveTab === "teams"
                   ? "bg-[#F2EBFF] text-[#5B0AFF] border-[#5B0AFF] border"
                   : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB]"
               }`}
@@ -69,7 +73,7 @@ const AssistantDashboard = () => {
                   <div className="fixed inset-0 z-10" onClick={() => setShowCreateMenu(false)} />
 
                   <div className="absolute right-0 mt-2 w-110 bg-white rounded-2xl border border-[#F3F4F6] shadow-[0_8px_30px_rgba(0,0,0,0.08)] overflow-hidden z-20">
-                    <button className="w-full text-left flex items-start gap-3 px-5 py-4 bg-[#F3ECFF] cursor-pointer transition-colors">
+                    <button className="w-full text-left flex items-start gap-3 px-5 py-4 bg-[#F3ECFF] cursor-pointer transition-colors" onClick={() => navigate("/dashboard/create-assistant")}>
                       <span className="text-[#5B0AFF] mt-0.5">{Icons.person}</span>
                       <span>
                         <span className="block text-[#7029FF] font-medium text-[14px] mb-0.5">
@@ -105,7 +109,7 @@ const AssistantDashboard = () => {
         </div>
 
         {/* ── Content ── */}
-        {activeTab === "assistants" ? <AssistantsView /> : <TeamsView />}
+        {assistantActiveTab === "assistants" ? <AssistantsView /> : <TeamsView />}
       </div>
     </div>
   );

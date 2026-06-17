@@ -21,6 +21,7 @@ import { Navigate } from "react-router-dom";
 import ProtectedRoute from "../component/ProtectedRoute";
 import { RootRedirect } from "../component/RootRedirect";
 import AssistantDashboard from "../component/AssistantDashboard";
+import MyAssistantsSetupPage from "../feature/pages/MyAssistantsSetupPage";
 
 
 
@@ -82,6 +83,10 @@ export const Route = [
       {
         path: "my-assistants/view",
         element: <AssistantDashboard />
+      },
+      {
+        path: "create-assistant",
+        element : <MyAssistantsSetupPage/>
       }
     ],
   },

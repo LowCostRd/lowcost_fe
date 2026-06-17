@@ -29,43 +29,8 @@ const AssistantAvatar = () => (
   </div>
 );
 
-// export const AssistantCard = ({ assistant }) => (
-//   <div className="min-h-screen  bg-[#F8F8F8] font-sans p-6 w-full rounded-[15px]">
-//     <div className="w-full max-w-105 border border-[#EDEDED] rounded-2xl py-6 h-85 bg-white">
-//     <div className="flex items-center gap-5 mb-5 px-5">
-//       <AssistantAvatar />
-//       <div>
-//         <h3 className="font-semibold text-[#1F2937] text-[15px] leading-tight">{assistant.name}</h3>
-//         <p className="text-[#6B7280] text-[15px] mt-1">{assistant.specialty}</p>
-//       </div>
-//     </div>
 
-//     <hr className="border-[#E5E7EB] mb-4" />
 
-//     <p className="font-bold text-[#1F2937] text-[15px] px-5  mb-1.5">{assistant.phone}</p>
-//     <div className="flex items-center gap-2 text-[14px] mb-5 px-5">
-        
-//       <span className="flex items-center gap-1.5 text-[#29996A] font-medium">
-//         {Icons.greenDots}
-//         {assistant.status}
-//       </span>
-//       <span className="text-[#94A3B8]">|</span>
-//       <span className="text-[#6B7280]">{assistant.callsToday} calls today</span>
-//     </div>
-
-//     <hr className="border-[#E5E7EB] mb-4" />
-
-//     <div className="flex items-center gap-2 px-5 py-3">
-//       <button className="w-16 h-16 rounded-full border border-[#94A3B8] flex items-center justify-center text-[#6B7280] hover:bg-[#F9FAFB] cursor-pointer transition-colors shrink-0">
-//         {Icons.dots}
-//       </button>
-//       <button className="flex-1 py-3.5 rounded-full border border-[#94A3B8] text-[#6B7280] font-medium text-[14px] hover:bg-[#F9FAFB] cursor-pointer transition-colors">
-//         View Details
-//       </button>
-//     </div>
-//   </div>
-//   </div>
-// );
 
 export const AssistantCard = ({ assistant }) => (
   <div className="border border-[#EDEDED] rounded-2xl py-6 bg-white">
