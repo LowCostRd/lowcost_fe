@@ -2,14 +2,16 @@ import { useState } from "react";
 import AssistantsView from "./AssistantsView";
 import TeamsView from "./TeamsView";
 import Icons from "../assets/Icons";
-import { useNavigate } from "react-router";
+
 import { useUIStore } from "../store/UseUIStore";
+import CreateAssistantModal from "./CreateAssistantModal";
 
 const AssistantDashboard = () => {
     const { assistantActiveTab, setAssistantActiveTab } = useUIStore();
   const [showCreateMenu, setShowCreateMenu] = useState(false);
+  const [showSpecialtyModal, setShowSpecialtyModal] = useState(false);
 
-  const navigate = useNavigate();
+
 
   return (
     <div className="min-h-screen  bg-[#F8F8F8] font-sans p-6">
@@ -73,7 +75,11 @@ const AssistantDashboard = () => {
                   <div className="fixed inset-0 z-10" onClick={() => setShowCreateMenu(false)} />
 
                   <div className="absolute right-0 mt-2 w-110 bg-white rounded-2xl border border-[#F3F4F6] shadow-[0_8px_30px_rgba(0,0,0,0.08)] overflow-hidden z-20">
-                    <button className="w-full text-left flex items-start gap-3 px-5 py-4 bg-[#F3ECFF] cursor-pointer transition-colors" onClick={() => navigate("/dashboard/create-assistant")}>
+                    <button className="w-full text-left flex items-start gap-3 px-5 py-4 bg-[#F3ECFF] cursor-pointer transition-colors" 
+                    onClick={() => {
+                    setShowCreateMenu(true);
+                    setShowSpecialtyModal(true);
+                  }}>
                       <span className="text-[#5B0AFF] mt-0.5">{Icons.person}</span>
                       <span>
                         <span className="block text-[#7029FF] font-medium text-[14px] mb-0.5">
@@ -107,6 +113,11 @@ const AssistantDashboard = () => {
             </div>
           </div>
         </div>
+
+
+      {showSpecialtyModal && (
+            <CreateAssistantModal onClose={() => setShowSpecialtyModal(false)} />
+        )}
 
         {/* ── Content ── */}
         {assistantActiveTab === "assistants" ? <AssistantsView /> : <TeamsView />}
