@@ -1,17 +1,47 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import AssistantsView from "./AssistantsView";
 import TeamsView from "./TeamsView";
 import Icons from "../assets/Icons";
 
 import { useUIStore } from "../store/UseUIStore";
 import CreateAssistantModal from "./CreateAssistantModal";
+import { useAgentStore } from "../store/AssistantStore";
 
 const AssistantDashboard = () => {
-    const { assistantActiveTab, setAssistantActiveTab } = useUIStore();
+  const { assistantActiveTab, setAssistantActiveTab } = useUIStore();
   const [showCreateMenu, setShowCreateMenu] = useState(false);
   const [showSpecialtyModal, setShowSpecialtyModal] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const { agents, isLoadingAgents, fetchAgents } = useAgentStore();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // instantly filter what's already on screen
+  const displayedAgents = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return agents;
+    return agents.filter(
+      (a) =>
+        a.name.toLowerCase().includes(q) ||
+        a.specialty.toLowerCase().includes(q)
+    );
+  }, [agents, searchQuery]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value); // updates displayedAgents instantly via useMemo
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchAgents({ search: value }); // syncs with server in the background
+    }, 400);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen  bg-[#F8F8F8] font-sans p-6">
@@ -49,6 +79,8 @@ const AssistantDashboard = () => {
                   {Icons.search}
                 </span>
                 <input
+                 value={searchQuery}
+                 onChange={handleSearch}
                   type="text"
                   placeholder="Search"
                   className="w-95 h-15 pl-11 pr-11 rounded-full border border-[#E5E7EB] text-[14px] text-[#1F2937] placeholder-[#6B7280] outline-none focus:border-[#5B0AFF]"
@@ -120,7 +152,11 @@ const AssistantDashboard = () => {
         )}
 
         {/* ── Content ── */}
-        {assistantActiveTab === "assistants" ? <AssistantsView /> : <TeamsView />}
+        {assistantActiveTab === "assistants" ? (
+          <AssistantsView agents={displayedAgents} isLoading={isLoadingAgents} searchQuery={searchQuery} />
+        ) : (
+          <TeamsView />
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Step from "../../component/Step";
@@ -38,6 +38,8 @@ const AssistantRole = () => {
     ...(firstOptionalId ? [firstOptionalId] : []),
   ]);
 
+
+
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const PHONE_NUMBER = "(555) 987-6543";
 
@@ -50,6 +52,21 @@ const AssistantRole = () => {
       prev.includes(roleId) ? prev.filter((id) => id !== roleId) : [...prev, roleId]
     );
   };
+
+  useEffect(() => {
+    if (!showSuccessModal) return;
+  
+    // Push a dummy entry so the back button hits it first
+    window.history.pushState(null, "", window.location.href);
+  
+    const handlePopState = () => {
+      // Re-push so repeated back presses keep getting blocked
+      window.history.pushState(null, "", window.location.href);
+    };
+  
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [showSuccessModal]);
 
 
   const handleCreate = async () => {
@@ -73,7 +90,7 @@ const AssistantRole = () => {
         first_message: firstMessage,
         roles: selectedRoleObjects,
       });
-      clearAgent(); // ✅ creation flow complete — wipe draft state
+      clearAgent(); 
       setShowSuccessModal(true);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong";
@@ -83,8 +100,9 @@ const AssistantRole = () => {
 
   const handleGoToDashboard = () => {
     setShowSuccessModal(false);
-    navigate("/my-assistants/dashboard", {
+    navigate("/dashboard/my-assistants", {
       state: { ...location.state, selectedRoles },
+      replace: true,
     });
   };
 
