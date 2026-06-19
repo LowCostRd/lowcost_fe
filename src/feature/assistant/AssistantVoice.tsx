@@ -165,45 +165,6 @@ const AssistantVoice = () => {
     });
   };
 
-  // const handleNext = async () => {
-  //   if (!selectedVoice) {
-  //     toast.error("Please select a voice.");
-  //     return;
-  //   }
-
-  //   if (!agentId) {
-  //     toast.error("Assistant not found. Please go back and try again.");
-  //     return;
-  //   }
-
-  //   // Skip API call if voice unchanged
-  //   if (agentVoiceId === selectedVoice) {
-  //     navigate("/my-assistants/setup/role", {
-  //       state: { ...location.state, selectedVoice },
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     await updateAgentVoice(agentId, selectedVoice);
-
-  //     toast.success("Voice updated successfully!", {
-  //       position: "top-right",
-  //       autoClose: 4000,
-  //       style: { fontSize: "16px" },
-  //     });
-
-  //         setTimeout(() => {              
-  //     navigate("/my-assistants/setup/role", {
-  //       state: { ...location.state, selectedVoice },
-  //     });
-  //   }, 1000);   
-
-  //   } catch (err) {
-  //     const message = err instanceof Error ? err.message : "Something went wrong";
-  //     toast.error(message);
-  //   }
-  // };
 
   const handleNext = async () => {
     if (!selectedVoice) {

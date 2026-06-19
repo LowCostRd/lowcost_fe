@@ -63,7 +63,7 @@ export interface AgentState {
   agentId: string | null;
   agentName: string | null;
   agentSpecialty: string | null;
-  agentImageUrl: string
+  agentImageUrl: string | null;  
   createAgent: (data: CreateAgentPayload) => Promise<string>;
   updateAgentName: (agentId: string, name: string) => Promise<void>;
   updateAgentSpecialty: (agentId: string, specialty: string) => Promise<void>;
