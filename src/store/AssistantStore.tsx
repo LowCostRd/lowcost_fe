@@ -96,7 +96,7 @@ export const useAgentStore = create<AgentState>((set,get) => ({
       if (imageUrl) {
         localStorage.setItem("draft_agent_image_url", imageUrl);
       }
-      set({ isLoading: false, agentVoiceId: voiceId, agentImageUrl: imageUrl??null });
+      set({ isLoading: false, agentVoiceId: voiceId, agentImageUrl: imageUrl ?? null });
     } catch (error) {
       set({ isLoading: false });
       throw new Error(handleApiError(error, "Failed to update voice. Please try again."));

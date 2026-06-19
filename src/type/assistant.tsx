@@ -73,7 +73,7 @@ export interface AgentState {
   isLoadingVoices: boolean;
   agentVoiceId: string | null;
   fetchVoices: () => Promise<void>;
-  updateAgentVoice: (agentId: string, voiceId: string, imageUrl: string) => Promise<void>;
+  updateAgentVoice: (agentId: string, voiceId: string, imageUrl?: string) => Promise<void>;
   updateAgentRoles: (agentId: string, payload: UpdateRolesPayload) => Promise<UpdateRolesResponse["message"]>;
   agents: Agent[];
   isLoadingAgents: boolean;
