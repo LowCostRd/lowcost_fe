@@ -88,7 +88,7 @@ export const useAgentStore = create<AgentState>((set,get) => ({
     }
   },
 
-  updateAgentVoice: async (agentId: string, voiceId: string, imageUrl: string) => {
+  updateAgentVoice: async (agentId: string, voiceId: string, imageUrl?: string) => {
     set({ isLoading: true });
     try {
       await api.patch(`/v1/api/agents/${agentId}/voice`, { voice_id: voiceId, image_url: imageUrl });
@@ -96,7 +96,7 @@ export const useAgentStore = create<AgentState>((set,get) => ({
       if (imageUrl) {
         localStorage.setItem("draft_agent_image_url", imageUrl);
       }
-      set({ isLoading: false, agentVoiceId: voiceId, agentImageUrl: imageUrl });
+      set({ isLoading: false, agentVoiceId: voiceId, agentImageUrl: imageUrl ?? null });
     } catch (error) {
       set({ isLoading: false });
       throw new Error(handleApiError(error, "Failed to update voice. Please try again."));
