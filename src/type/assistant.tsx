@@ -63,6 +63,7 @@ export interface AgentState {
   agentId: string | null;
   agentName: string | null;
   agentSpecialty: string | null;
+  agentImageUrl: string | null;  
   createAgent: (data: CreateAgentPayload) => Promise<string>;
   updateAgentName: (agentId: string, name: string) => Promise<void>;
   updateAgentSpecialty: (agentId: string, specialty: string) => Promise<void>;
@@ -72,8 +73,12 @@ export interface AgentState {
   isLoadingVoices: boolean;
   agentVoiceId: string | null;
   fetchVoices: () => Promise<void>;
-  updateAgentVoice: (agentId: string, voiceId: string) => Promise<void>;
+  updateAgentVoice: (agentId: string, voiceId: string, imageUrl?: string) => Promise<void>;
   updateAgentRoles: (agentId: string, payload: UpdateRolesPayload) => Promise<UpdateRolesResponse["message"]>;
+  agents: Agent[];
+  isLoadingAgents: boolean;
+  fetchAgents: (filters?: AgentListFilters) => Promise<void>;
+  __searchRequestId: number;
 
 }
 
@@ -159,6 +164,32 @@ export interface Role {
   locked?: boolean;
 }
 
+export interface Agent {
+  user_id: string;
+  agent_id: string;
+  name: string;
+  specialty: string;
+  voice_id: string;
+  image_url: string;
+  roles: string[];
+  created_at: { $date: string };
+  updated_at: { $date: string };
+}
+
+export interface GetAgentsResponse {
+  success: boolean;
+  message: Agent[];
+  status_code: number;
+  timestamp: string;
+}
+
+export interface AgentListFilters {
+  name?: string;
+  specialty?: string;
+  search?: string;
+  date_from?: string;
+  date_to?: string;
+}
 
 
 export const SPECIALTY_ROLES: Record<string, Role[]> = {

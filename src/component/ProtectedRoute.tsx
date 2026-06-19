@@ -27,6 +27,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) return <LoadingScreen />;
 
+  
+
   // No token → send to signin
   if (!token) return <Navigate to="/signin" replace />;
 

@@ -8,14 +8,17 @@ import type { Specialty } from "../../type/assistant";
 import { useAgentStore } from "../../store/AssistantStore";
 import Icons from "../../assets/Icons";
 
-import evelynIcon from "../../assets/assistant/voice/dp.png";
-import michealIcon from "../../assets/assistant/voice/Mask group (22).png";
-import williamIcon from "../../assets/assistant/voice/Mask group (23).png";
-import mannyIcon from "../../assets/assistant/voice/dp (1).png";
-import liamIcon from "../../assets/assistant/voice/Mask group (24).png";
-import sandraIcon from "../../assets/assistant/voice/Mask group (25).png";
 
-const AVATARS = [evelynIcon, michealIcon,williamIcon, mannyIcon, liamIcon,sandraIcon];
+
+const AVATARS = [
+  "https://res.cloudinary.com/dlgnbezvh/image/upload/v1781871252/bmvytymw4ukzsrwhbigp.png",
+  "https://res.cloudinary.com/dlgnbezvh/image/upload/v1781871253/yboilkbkbbgo5vqusj3o.png",
+  "https://res.cloudinary.com/dlgnbezvh/image/upload/v1781871254/fyylxrqqt5qenbv6slws.png",
+  "https://res.cloudinary.com/dlgnbezvh/image/upload/v1781871255/btcuix4mvzbnkyxrclqn.png",
+  "https://res.cloudinary.com/dlgnbezvh/image/upload/v1781871256/y2zkdnxyj1fqt5bpt552.png",
+  "https://res.cloudinary.com/dlgnbezvh/image/upload/v1781871257/jrnnfn2kpoc4xaanaphn.png"
+
+]
 
 const GENDER_PATTERN = ["female", "male", "male", "female", "male", "female"];
 
@@ -162,6 +165,7 @@ const AssistantVoice = () => {
     });
   };
 
+
   const handleNext = async () => {
     if (!selectedVoice) {
       toast.error("Please select a voice.");
@@ -173,6 +177,8 @@ const AssistantVoice = () => {
       return;
     }
 
+    const selectedVoiceObj = mappedVoices.find((v) => v.id === selectedVoice);
+
     // Skip API call if voice unchanged
     if (agentVoiceId === selectedVoice) {
       navigate("/my-assistants/setup/role", {
@@ -182,7 +188,7 @@ const AssistantVoice = () => {
     }
 
     try {
-      await updateAgentVoice(agentId, selectedVoice);
+      await updateAgentVoice(agentId, selectedVoice, selectedVoiceObj?.avatar);
 
       toast.success("Voice updated successfully!", {
         position: "top-right",
@@ -190,12 +196,12 @@ const AssistantVoice = () => {
         style: { fontSize: "16px" },
       });
 
-          setTimeout(() => {              // ← add this
-      navigate("/my-assistants/setup/role", {
-        state: { ...location.state, selectedVoice },
-      });
-    }, 1000);   
-    
+      setTimeout(() => {              
+        navigate("/my-assistants/setup/role", {
+          state: { ...location.state, selectedVoice },
+        });
+      }, 1000);   
+
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong";
       toast.error(message);
