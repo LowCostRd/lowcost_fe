@@ -6,6 +6,7 @@
 // import { useUIStore } from "../store/UseUIStore";
 // import CreateAssistantModal from "./CreateAssistantModal";
 // import { useAgentStore } from "../store/AssistantStore";
+// import DateRangeCalendar, { type DateRange } from "./DateRangeCalendar";
 
 // const SPECIALTIES = [
 //   "General Practice",
@@ -18,8 +19,6 @@
 //   "OB/GYN",
 //   "Orthopedics",
 // ];
-
-// type DateRange = { start: string; end: string };
 
 // const ChevronSmall = ({ active }: { active: boolean }) => (
 //   <svg
@@ -40,6 +39,15 @@
 //   </svg>
 // );
 
+// // Agent.created_at / updated_at can come back as a plain ISO string OR as a
+// // Mongo extended-JSON wrapper { $date: string }. This normalizes either shape
+// // into a value `new Date()` can safely accept.
+// const toDateValue = (value: string | { $date: string } | null | undefined): string | number => {
+//   if (!value) return "";
+//   if (typeof value === "string") return value;
+//   return value.$date;
+// };
+
 // const AssistantDashboard = () => {
 //   const { assistantActiveTab, setAssistantActiveTab } = useUIStore();
 //   const [showCreateMenu, setShowCreateMenu] = useState(false);
@@ -48,6 +56,9 @@
 //   const [showFilterMenu, setShowFilterMenu] = useState(false);
 //   const [activeFilterTab, setActiveFilterTab] = useState<"date" | "specialty" | null>(null);
 //   const filterMenuRef = useRef<HTMLDivElement | null>(null);
+
+//   // Which side of the date range ("from" | "to") the next calendar click fills
+//   const [activeDateField, setActiveDateField] = useState<"from" | "to">("from");
 
 //   // Committed filters (actually applied to the list)
 //   const [appliedSpecialties, setAppliedSpecialties] = useState<string[]>([]);
@@ -81,7 +92,7 @@
 //       // Assumes agent has a createdAt/date field — adjust the key to match your data
 //       const matchesDate = (() => {
 //         if (!appliedDateRange || (!appliedDateRange.start && !appliedDateRange.end)) return true;
-//         const created = new Date(a.created_at).getTime();
+//         const created = new Date(toDateValue(a.created_at)).getTime();
 //         const afterStart = appliedDateRange.start
 //           ? created >= new Date(appliedDateRange.start).getTime()
 //           : true;
@@ -137,6 +148,7 @@
 //   const openFilterMenu = () => {
 //     setDraftSpecialties(appliedSpecialties); // seed draft with last-applied state
 //     setDraftDateRange(appliedDateRange);
+//     setActiveDateField("from");
 //     setShowFilterMenu((s) => !s);
 //   };
 
@@ -286,46 +298,15 @@
 //                         </button>
 //                       </div>
 
-//                       {/* Date range pickers */}
+//                       {/* Custom date range calendar (From/To pills + month grid beneath) */}
 //                       {activeFilterTab === "date" && (
-//                         <div className="px-6 pb-6 -mt-10">
-//                           <div className="flex items-center gap-4">
-//                             <fieldset className="flex-1 rounded-xl border border-[#E5E7EB] px-4 pt-0 pb-2.5">
-//                               <legend className="px-1.5 ml-2 text-[12px] text-[#9CA3AF]">
-//                                 From
-//                               </legend>
-//                               <input
-//                                 type="date"
-//                                 value={draftDateRange?.start ?? ""}
-//                                 onChange={(e) =>
-//                                   setDraftDateRange((prev) => ({
-//                                     start: e.target.value,
-//                                     end: prev?.end ?? "",
-//                                   }))
-//                                 }
-//                                 className="w-40 bg-transparent text-[13px] font-medium text-[#374151] outline-none cursor-pointer scheme-light"
-//                               />
-//                             </fieldset>
-
-//                             <span className="text-[#9CA3AF] text-[18px] mb-2.5">—</span>
-
-//                             <fieldset className="flex-1 rounded-xl border border-[#E5E7EB] px-4 pt-0 pb-2.5">
-//                               <legend className="px-1.5 ml-2 text-[12px] text-[#9CA3AF]">
-//                                 To
-//                               </legend>
-//                               <input
-//                                 type="date"
-//                                 value={draftDateRange?.end ?? ""}
-//                                 onChange={(e) =>
-//                                   setDraftDateRange((prev) => ({
-//                                     start: prev?.start ?? "",
-//                                     end: e.target.value,
-//                                   }))
-//                                 }
-//                                 className="w-40 bg-transparent text-[13px] font-medium text-[#374151] outline-none cursor-pointer scheme-light"
-//                               />
-//                             </fieldset>
-//                           </div>
+//                         <div className="-mt-10">
+//                           <DateRangeCalendar
+//                             value={draftDateRange}
+//                             onChange={setDraftDateRange}
+//                             activeField={activeDateField}
+//                             onActiveFieldChange={setActiveDateField}
+//                           />
 //                         </div>
 //                       )}
 
@@ -469,6 +450,7 @@ import { useUIStore } from "../store/UseUIStore";
 import CreateAssistantModal from "./CreateAssistantModal";
 import { useAgentStore } from "../store/AssistantStore";
 import DateRangeCalendar, { type DateRange } from "./DateRangeCalendar";
+import type { AgentListFilters } from "../type/assistant";
 
 const SPECIALTIES = [
   "General Practice",
@@ -501,6 +483,36 @@ const ChevronSmall = ({ active }: { active: boolean }) => (
   </svg>
 );
 
+// Agent.created_at / updated_at can come back as a plain ISO string OR as a
+// Mongo extended-JSON wrapper { $date: string }. This normalizes either shape
+// into a value `new Date()` can safely accept.
+const toDateValue = (value: string | { $date: string } | null | undefined): string | number => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.$date;
+};
+
+// Maps current UI filter state -> AgentListFilters, the exact shape
+// fetchAgents()/the backend route expects:
+//   { name?, specialty?, search?, date_from?, date_to? }
+//
+// specialty is sent as a single comma-separated string (e.g. "Dental,Pediatrics");
+// the backend route splits on "," before querying.
+const buildFilterParams = (
+  search: string,
+  specialties: string[],
+  dateRange: DateRange | null
+): AgentListFilters => {
+  const filters: AgentListFilters = {};
+
+  if (search) filters.search = search;
+  if (specialties.length > 0) filters.specialty = specialties.join(",");
+  if (dateRange?.start) filters.date_from = dateRange.start;
+  if (dateRange?.end) filters.date_to = dateRange.end;
+
+  return filters;
+};
+
 const AssistantDashboard = () => {
   const { assistantActiveTab, setAssistantActiveTab } = useUIStore();
   const [showCreateMenu, setShowCreateMenu] = useState(false);
@@ -529,7 +541,9 @@ const AssistantDashboard = () => {
   const { agents, isLoadingAgents, fetchAgents } = useAgentStore();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // instantly filter what's already on screen
+  // instantly filter what's already on screen (covers the gap while the
+  // debounced server request for search text is still in flight; specialty/date
+  // are server-applied immediately on Apply, so this just mirrors that too)
   const displayedAgents = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return agents.filter((a) => {
@@ -542,18 +556,20 @@ const AssistantDashboard = () => {
         appliedSpecialties.length === 0 ||
         appliedSpecialties.includes(a.specialty);
 
-      // Assumes agent has a createdAt/date field — adjust the key to match your data
-      const matchesDate = (() => {
-        if (!appliedDateRange || (!appliedDateRange.start && !appliedDateRange.end)) return true;
-        const created = new Date(a.created_at).getTime();
-        const afterStart = appliedDateRange.start
-          ? created >= new Date(appliedDateRange.start).getTime()
-          : true;
-        const beforeEnd = appliedDateRange.end
-          ? created <= new Date(appliedDateRange.end).getTime()
-          : true;
-        return afterStart && beforeEnd;
-      })();
+        const matchesDate = (() => {
+          if (!appliedDateRange || (!appliedDateRange.start && !appliedDateRange.end)) return true;
+          const created = new Date(toDateValue(a.created_at)).getTime();
+          
+          const afterStart = appliedDateRange.start
+            ? created >= new Date(appliedDateRange.start).getTime()
+            : true;
+            
+          const beforeEnd = appliedDateRange.end
+            ? created <= new Date(appliedDateRange.end + "T23:59:59.999").getTime()
+            : true;
+            
+          return afterStart && beforeEnd;
+        })();
 
       return matchesQuery && matchesSpecialty && matchesDate;
     });
@@ -565,7 +581,8 @@ const AssistantDashboard = () => {
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      fetchAgents({ search: value }); // syncs with server in the background
+      // keep currently-applied specialty/date filters attached while searching
+      fetchAgents(buildFilterParams(value, appliedSpecialties, appliedDateRange));
     }, 400);
   };
 
@@ -595,7 +612,7 @@ const AssistantDashboard = () => {
   const handleClearSearch = () => {
     setSearchQuery("");
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    fetchAgents({ search: "" });
+    fetchAgents(buildFilterParams("", appliedSpecialties, appliedDateRange));
   };
 
   const openFilterMenu = () => {
@@ -614,21 +631,22 @@ const AssistantDashboard = () => {
   };
 
   const handleCancelFilters = () => {
-    setDraftSpecialties(appliedSpecialties); // discard unsaved changes
-    setDraftDateRange(appliedDateRange);
+    // Clear both draft AND applied filters
+    setDraftSpecialties([]);
+    setDraftDateRange(null);
+    setAppliedSpecialties([]);
+    setAppliedDateRange(null);
     setShowFilterMenu(false);
     setActiveFilterTab(null);
+  
+    // Refetch with no filters
+    fetchAgents(buildFilterParams(searchQuery, [], null));
   };
 
   const handleApplyFilters = () => {
     setAppliedSpecialties(draftSpecialties);
     setAppliedDateRange(draftDateRange);
-    fetchAgents({
-      search: searchQuery,
-   //   specialties: draftSpecialties,
-    //  dateFrom: draftDateRange?.start || undefined,
-   //   dateTo: draftDateRange?.end || undefined,
-    });
+    fetchAgents(buildFilterParams(searchQuery, draftSpecialties, draftDateRange));
     setShowFilterMenu(false);
     setActiveFilterTab(null);
   };
