@@ -97,6 +97,7 @@ const AssistantDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { agents, isLoadingAgents, fetchAgents } = useAgentStore();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isSearchPending, setIsSearchPending] = useState(false);
 
   // instantly filter what's already on screen (covers the gap while the
   // debounced server request for search text is still in flight; specialty/date
@@ -134,12 +135,13 @@ const AssistantDashboard = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchQuery(value); // updates displayedAgents instantly via useMemo
-
+    setSearchQuery(value);
+    if (value.trim()) setIsSearchPending(true); // show skeleton immediately
+  
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      // keep currently-applied specialty/date filters attached while searching
-      fetchAgents(buildFilterParams(value, appliedSpecialties, appliedDateRange));
+    debounceRef.current = setTimeout(async () => {
+      await fetchAgents(buildFilterParams(value, appliedSpecialties, appliedDateRange));
+      setIsSearchPending(false); // fetch done — now safe to show results or empty state
     }, 400);
   };
 
@@ -168,6 +170,7 @@ const AssistantDashboard = () => {
 
   const handleClearSearch = () => {
     setSearchQuery("");
+    setIsSearchPending(false);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     fetchAgents(buildFilterParams("", appliedSpecialties, appliedDateRange));
   };
@@ -453,11 +456,12 @@ const AssistantDashboard = () => {
 
         {/* ── Content ── */}
         {assistantActiveTab === "assistants" ? (
-          <AssistantsView
-            agents={displayedAgents}
-            isLoading={isLoadingAgents}
-            searchQuery={searchQuery}
-          />
+        <AssistantsView
+        agents={displayedAgents}
+        isLoading={isLoadingAgents || isSearchPending}
+        searchQuery={searchQuery}
+        hasActiveFilters={appliedSpecialties.length > 0 || !!appliedDateRange}
+      />
         ) : (
           <TeamsView />
         )}
