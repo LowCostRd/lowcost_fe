@@ -87,16 +87,24 @@ const DateRangeCalendar = ({
 
   const handleDayClick = (date: Date) => {
     if (date > today) return; // future dates disabled
-
+  
     const iso = toISO(date);
-
+  
     if (activeField === "from") {
-      // If picking a "from" date that's after the current "to" date, clear "to"
+      // Clicking the already-selected "from" date deselects it
+      if (iso === start) {
+        onChange({ start: "", end });
+        return;
+      }
       const nextEnd = end && iso > end ? "" : end;
       onChange({ start: iso, end: nextEnd });
       onActiveFieldChange("to");
     } else {
-      // If picking a "to" date that's before the current "from" date, swap
+      // Clicking the already-selected "to" date deselects it
+      if (iso === end) {
+        onChange({ start, end: "" });
+        return;
+      }
       if (start && iso < start) {
         onChange({ start: iso, end: start });
       } else {
