@@ -3,6 +3,7 @@ import { Route } from "./route/Route";
 import NetworkBanner from "./component/NetworkBanner";
 import { useAppReady } from "./hooks/useAppReady";
 import DesktopOnly from "./component/DesktopOnly";
+import { ToastContainer } from "react-toastify";
 
 function App() {
     useAppReady();
@@ -12,6 +13,7 @@ function App() {
      <DesktopOnly>
       <NetworkBanner />
       {routing}
+      <ToastContainer />
         </DesktopOnly>
   );
 }
