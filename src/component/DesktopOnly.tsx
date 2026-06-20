@@ -18,11 +18,11 @@ const DesktopOnly = ({ children }: DesktopOnlyProps) => {
         {/* Center Content */}
         <div className="h-full flex items-center justify-center px-6">
           <div className="text-center">
-            <div className="flex justify-center mb-0">
-              {Icons.warning}
+            <div className="flex justify-center ">
+              {Icons.desktopIcon}
             </div>
 
-            <h1 className="text-3xl font-semibold mt-6 mb-3 text-[#212123]">
+            <h1 className="text-3xl font-semibold -mt-10 mb-3 text-[#212123]">
               Desktop Only
             </h1>
 
