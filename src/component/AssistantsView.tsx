@@ -5,6 +5,7 @@ interface AssistantsViewProps {
   agents: Agent[];
   isLoading: boolean;
   searchQuery?: string;
+  hasActiveFilters?: boolean;
 }
 
 const AssistantAvatar = ({ imageUrl }: { imageUrl?: string }) => (
@@ -78,10 +79,7 @@ const SkeletonCard = () => (
   </div>
 );
 
-const AssistantsView = ({ agents, isLoading, searchQuery }: AssistantsViewProps) => {
-  // Only show the full skeleton grid on the very first load (no agents loaded yet).
-  // While a search is in flight and we already have previous results, keep them
-  // visible instead of blanking the whole grid out.
+const AssistantsView = ({ agents, isLoading, searchQuery, hasActiveFilters }: AssistantsViewProps) => {
   if (isLoading && agents.length === 0) {
     return (
       <div className="min-h-screen bg-[#F8F8F8] font-sans p-6 w-full rounded-[15px]">
@@ -95,16 +93,29 @@ const AssistantsView = ({ agents, isLoading, searchQuery }: AssistantsViewProps)
   if (!agents.length) {
     const isSearching = !!searchQuery?.trim();
 
+
+    const title = isSearching || hasActiveFilters ? "No results found" : "No assistants yet";
+
+    const subtitle = (() => {
+      if (isSearching && hasActiveFilters)
+        return `No assistants match "${searchQuery}" with the selected filters. Try adjusting your search or filters.`;
+      if (isSearching)
+        return `No assistants match "${searchQuery}". Try a different search term.`;
+      if (hasActiveFilters)
+        return "No assistants match the selected filters. Try adjusting or clearing your filters.";
+      return "Create your first AI assistant to start handling calls for your business.";
+    })();
+
     return (
       <div className="min-h-screen bg-[#F8F8F8] font-sans p-6 w-full rounded-[15px] flex flex-col items-center justify-center text-center px-6 py-20">
-        <h2 className="text-[#1F2937] font-bold text-[20px] mb-2">
-          {isSearching ? "No results found" : "No assistants yet"}
-        </h2>
-        <p className="text-[#9CA3AF] text-[14px] leading-relaxed max-w-md">
-          {isSearching
-            ? `We couldn't find any assistants matching "${searchQuery}".`
-            : "Create your first AI assistant to start handling calls for your business."}
-        </p>
+        <div className="w-14 h-14 rounded-full  flex items-center justify-center mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B0AFF" strokeWidth="1.8">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M16.5 16.5L21 21" strokeLinecap="round" />
+          </svg>
+        </div>
+        <h2 className="text-[#1F2937] font-bold text-[20px] mb-2">{title}</h2>
+        <p className="text-[#9CA3AF] text-[14px] leading-relaxed max-w-md">{subtitle}</p>
       </div>
     );
   }
