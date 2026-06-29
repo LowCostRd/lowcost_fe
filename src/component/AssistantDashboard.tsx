@@ -212,7 +212,7 @@ const AssistantDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen  bg-[#F8F8F8] font-sans p-6">
+    <div className="min-h-screen  bg-[#F8F8F8]  p-6">
       <div className="bg-white min-h-screen rounded-[20px] p-6  mx-auto relative">
         {/* ── Header row ── */}
         <div className="flex items-center justify-between gap-4 flex-wrap mb-8">
