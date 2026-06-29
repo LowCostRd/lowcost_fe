@@ -100,7 +100,7 @@ const AssistantRole = () => {
 
   const handleGoToDashboard = () => {
     setShowSuccessModal(false);
-    navigate("/dashboard/my-assistants", {
+    navigate("/dashboard/call-analytics", {
       state: { ...location.state, selectedRoles },
       replace: true,
     });

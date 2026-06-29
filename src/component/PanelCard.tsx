@@ -8,7 +8,7 @@ const PanelCard = ({ icon, title, badge, children }: PanelCardProps) => (
           <span className="text-[14px] font-semibold text-[#1F2937]">{title}</span>
         </div>
         {badge !== undefined && (
-          <span className="text-[18px] font-bold text-[#6B7280]">{badge}</span>
+          <span className="text-[18px] font-bold text-[#1F2937]">{badge}</span>
         )}
       </div>
       <div className="px-5 py-1 flex-1">{children}</div>
