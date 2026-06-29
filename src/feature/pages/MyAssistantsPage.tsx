@@ -6,7 +6,7 @@ import { useAgentStore } from "../../store/AssistantStore";
 const MyAssistantsPage = () => {
   const fetchAgents = useAgentStore((s) => s.fetchAgents);
 
-  // null = "we don't know yet", true/false = decided after first load
+
   const [hasAnyAgents, setHasAnyAgents] = useState<boolean | null>(null);
 
   useEffect(() => {
