@@ -1,10 +1,53 @@
 import { useState, useRef, useEffect } from "react";
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type QuickRangeDays =
+  | 0
+  | -1
+  | "thisWeek"
+  | "lastWeek"
+  | "thisMonth"
+  | "lastMonth"
+  | "thisYear"
+  | "lastYear"
+  | "allTime";
+
+interface QuickRange {
+  label: string;
+  days: QuickRangeDays;
+}
+
+interface DateRange {
+  start: string;
+  end: string;
+}
+
+interface MonthCalendarProps {
+  year: number;
+  month: number;
+  hoverDate: Date | null;
+  activeField: "from" | "to";
+  start: string;
+  end: string;
+  onDayClick: (date: Date) => void;
+  onDayHover: (date: Date) => void;
+}
+
+interface DateRangePickerProps {
+  onApply: (range: DateRange) => void;
+}
+
+interface CalendarCell {
+  date: Date;
+  outside: boolean;
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const QUICK_RANGES = [
-  { label: "Today",      days: 0  },
-  { label: "Yesterday",  days: -1 },
+const QUICK_RANGES: QuickRange[] = [
+  { label: "Today",      days: 0          },
+  { label: "Yesterday",  days: -1         },
   { label: "This week",  days: "thisWeek"  },
   { label: "Last week",  days: "lastWeek"  },
   { label: "This month", days: "thisMonth" },
@@ -23,11 +66,13 @@ const MONTHS = [
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function startOfDay(d) {
-  const c = new Date(d); c.setHours(0,0,0,0); return c;
+function startOfDay(d: Date): Date {
+  const c = new Date(d);
+  c.setHours(0, 0, 0, 0);
+  return c;
 }
 
-function isSameDay(a, b) {
+function isSameDay(a: Date | null, b: Date | null): boolean {
   if (!a || !b) return false;
   return (
     a.getFullYear() === b.getFullYear() &&
@@ -36,27 +81,27 @@ function isSameDay(a, b) {
   );
 }
 
-function isBetween(d, start, end) {
+function isBetween(d: Date, start: Date | null, end: Date | null): boolean {
   if (!start || !end) return false;
   const s = start < end ? start : end;
   const e = start < end ? end   : start;
   return d > s && d < e;
 }
 
-function formatLabel(start, end) {
-  const fmt = (d) =>
+function formatLabel(start: Date | null, end: Date | null): string {
+  const fmt = (d: Date) =>
     d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   if (!start) return fmt(new Date());
   if (!end || isSameDay(start, end)) return fmt(start);
   return `${fmt(start)} — ${fmt(end)}`;
 }
 
-function getMonthDays(year, month) {
+function getMonthDays(year: number, month: number): CalendarCell[] {
   const firstDay = new Date(year, month, 1);
   let offset = firstDay.getDay() - 1;
   if (offset < 0) offset = 6;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells = [];
+  const cells: CalendarCell[] = [];
   for (let i = 0; i < offset; i++) {
     const d = new Date(year, month, 1 - offset + i);
     cells.push({ date: d, outside: true });
@@ -71,24 +116,28 @@ function getMonthDays(year, month) {
   return cells;
 }
 
-function resolveQuickRange(days) {
+function resolveQuickRange(days: QuickRangeDays): { start: Date; end: Date } {
   const today = startOfDay(new Date());
   if (days === 0) return { start: today, end: today };
   if (days === -1) {
-    const y = new Date(today); y.setDate(y.getDate() - 1);
+    const y = new Date(today);
+    y.setDate(y.getDate() - 1);
     return { start: y, end: y };
   }
   if (days === "thisWeek") {
     const s = new Date(today);
-    let offset = today.getDay() - 1; if (offset < 0) offset = 6;
+    let offset = today.getDay() - 1;
+    if (offset < 0) offset = 6;
     s.setDate(today.getDate() - offset);
     return { start: s, end: today };
   }
   if (days === "lastWeek") {
     const s = new Date(today);
-    let offset = today.getDay() - 1; if (offset < 0) offset = 6;
+    let offset = today.getDay() - 1;
+    if (offset < 0) offset = 6;
     s.setDate(today.getDate() - offset - 7);
-    const e = new Date(s); e.setDate(s.getDate() + 6);
+    const e = new Date(s);
+    e.setDate(s.getDate() + 6);
     return { start: s, end: e };
   }
   if (days === "thisMonth") {
@@ -109,28 +158,35 @@ function resolveQuickRange(days) {
     const e = new Date(today.getFullYear() - 1, 11, 31);
     return { start: s, end: e };
   }
-  if (days === "allTime") {
-    const s = new Date(2000, 0, 1);
-    return { start: s, end: today };
-  }
-  return { start: today, end: today };
+  // "allTime"
+  const s = new Date(2000, 0, 1);
+  return { start: s, end: today };
 }
 
-function toISO(date) {
+function toISO(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 
-function fromISO(iso) {
+function fromISO(iso: string): Date {
   const [y, m, d] = iso.split("-").map(Number);
   return startOfDay(new Date(y, m - 1, d));
 }
 
 // ─── Single month calendar ────────────────────────────────────────────────────
 
-function MonthCalendar({ year, month, hoverDate, activeField, start, end, onDayClick, onDayHover }) {
+function MonthCalendar({
+  year,
+  month,
+  hoverDate,
+  activeField,
+  start,
+  end,
+  onDayClick,
+  onDayHover,
+}: MonthCalendarProps) {
   const cells = getMonthDays(year, month);
   const today = startOfDay(new Date());
 
@@ -142,7 +198,10 @@ function MonthCalendar({ year, month, hoverDate, activeField, start, end, onDayC
     <div style={{ width: 260 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", marginBottom: 4 }}>
         {DAYS.map((d) => (
-          <div key={d} style={{ textAlign: "center", fontSize: 12, color: "#9CA3AF", fontWeight: 500, padding: "4px 0" }}>
+          <div
+            key={d}
+            style={{ textAlign: "center", fontSize: 12, color: "#9CA3AF", fontWeight: 500, padding: "4px 0" }}
+          >
             {d}
           </div>
         ))}
@@ -154,9 +213,9 @@ function MonthCalendar({ year, month, hoverDate, activeField, start, end, onDayC
           const isFirstCol = col === 0;
           const isLastCol  = col === 6;
           const iso        = toISO(date);
-          const isStart    = start && iso === start;
-          const isEnd      = end   && iso === end;
-          const inRange    = rangeStart && rangeEnd && isBetween(date, rangeStart, rangeEnd);
+          const isStart    = !!start && iso === start;
+          const isEnd      = !!end   && iso === end;
+          const inRange    = rangeStart && rangeEnd ? isBetween(date, rangeStart, rangeEnd) : false;
           const isToday    = isSameDay(date, today);
           const isFuture   = date > today;
 
@@ -164,10 +223,10 @@ function MonthCalendar({ year, month, hoverDate, activeField, start, end, onDayC
           const toLocked   = activeField === "to"   && !!end   && !isEnd;
           const disabled   = outside || isFuture || fromLocked || toLocked;
 
-          let bg           = "transparent";
-          let color        = outside ? "#D1D5DB" : "#1F2937";
-          let fontWeight   = 400;
-          let borderRadius = "50%";
+          let bg: string           = "transparent";
+          let color: string        = outside ? "#D1D5DB" : "#1F2937";
+          let fontWeight: number   = 400;
+          let borderRadius: string = "50%";
 
           if (isStart || isEnd) {
             bg = "#5B0AFF";
@@ -196,49 +255,56 @@ function MonthCalendar({ year, month, hoverDate, activeField, start, end, onDayC
               }}
             >
               {(inRange || (isStart && end && !isEnd) || (isEnd && start && !isStart)) && (
-                <span style={{
-                  position: "absolute",
-                  top: 1, bottom: 1,
-                  left: (isStart && !isEnd) ? "50%" : 0,
-                  right: (isEnd && !isStart) ? "50%" : 0,
-                  background: "#EDE9FE",
-                  borderRadius: inRange && isFirstCol
-                    ? "8px 0 0 8px"
-                    : inRange && isLastCol
-                    ? "0 8px 8px 0"
-                    : 0,
-                  zIndex: 0,
-                }} />
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 1,
+                    bottom: 1,
+                    left: isStart && !isEnd ? "50%" : 0,
+                    right: isEnd && !isStart ? "50%" : 0,
+                    background: "#EDE9FE",
+                    borderRadius: inRange && isFirstCol
+                      ? "8px 0 0 8px"
+                      : inRange && isLastCol
+                      ? "0 8px 8px 0"
+                      : 0,
+                    zIndex: 0,
+                  }}
+                />
               )}
-              <span style={{
-                position: "relative",
-                zIndex: 1,
-                width: 32,
-                height: 32,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius,
-                background: bg,
-                color: disabled && !isStart && !isEnd ? "#C4C7CC" : color,
-                fontSize: 13,
-                fontWeight,
-                transition: "background 0.1s",
-              }}>
+              <span
+                style={{
+                  position: "relative",
+                  zIndex: 1,
+                  width: 32,
+                  height: 32,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius,
+                  background: bg,
+                  color: disabled && !isStart && !isEnd ? "#C4C7CC" : color,
+                  fontSize: 13,
+                  fontWeight,
+                  transition: "background 0.1s",
+                }}
+              >
                 {date.getDate()}
               </span>
               {showTodayDot && (
-                <span style={{
-                  position: "absolute",
-                  bottom: 2,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: 4,
-                  height: 4,
-                  borderRadius: "50%",
-                  background: "#5B0AFF",
-                  zIndex: 2,
-                }} />
+                <span
+                  style={{
+                    position: "absolute",
+                    bottom: 2,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: 4,
+                    height: 4,
+                    borderRadius: "50%",
+                    background: "#5B0AFF",
+                    zIndex: 2,
+                  }}
+                />
               )}
             </div>
           );
@@ -250,32 +316,32 @@ function MonthCalendar({ year, month, hoverDate, activeField, start, end, onDayC
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function DateRangePicker({ onApply }) {
+export default function DateRangePicker({ onApply }: DateRangePickerProps) {
   const today = new Date();
 
-  const [leftYear,  setLeftYear]  = useState(today.getFullYear());
-  const [leftMonth, setLeftMonth] = useState(today.getMonth() > 0 ? today.getMonth() - 1 : 0);
-  const [rightYear,  setRightYear]  = useState(today.getFullYear());
-  const [rightMonth, setRightMonth] = useState(today.getMonth());
+  const [leftYear,   setLeftYear]   = useState<number>(today.getFullYear());
+  const [leftMonth,  setLeftMonth]  = useState<number>(today.getMonth() > 0 ? today.getMonth() - 1 : 0);
+  const [rightYear,  setRightYear]  = useState<number>(today.getFullYear());
+  const [rightMonth, setRightMonth] = useState<number>(today.getMonth());
 
-  const [start,       setStart]       = useState("");
-  const [end,         setEnd]         = useState("");
-  const [activeField, setActiveField] = useState("from");
-  const [hoverDate,   setHoverDate]   = useState(null);
-  const [activeQuick, setActiveQuick] = useState(null);
+  const [start,       setStart]       = useState<string>("");
+  const [end,         setEnd]         = useState<string>("");
+  const [activeField, setActiveField] = useState<"from" | "to">("from");
+  const [hoverDate,   setHoverDate]   = useState<Date | null>(null);
+  const [activeQuick, setActiveQuick] = useState<string | null>(null);
 
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handler(e) {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  function handleDayClick(date) {
+  function handleDayClick(date: Date): void {
     const iso = toISO(date);
 
     if (activeField === "from") {
@@ -316,7 +382,7 @@ export default function DateRangePicker({ onApply }) {
     }
   }
 
-  function handleQuickRange(qr) {
+  function handleQuickRange(qr: QuickRange): void {
     const { start: s, end: e } = resolveQuickRange(qr.days);
     setStart(toISO(s));
     setEnd(toISO(e));
@@ -326,7 +392,7 @@ export default function DateRangePicker({ onApply }) {
 
     const shortRanges = ["Today", "Yesterday", "This week", "Last week", "This month", "Last month"];
     if (shortRanges.includes(qr.label)) {
-      const now = new Date();
+      const now  = new Date();
       const curM = now.getMonth();
       const curY = now.getFullYear();
       if (qr.label === "Last month") {
@@ -350,7 +416,7 @@ export default function DateRangePicker({ onApply }) {
     }
   }
 
-  function handleReset() {
+  function handleReset(): void {
     setStart("");
     setEnd("");
     setActiveField("from");
@@ -358,23 +424,23 @@ export default function DateRangePicker({ onApply }) {
     setActiveQuick(null);
   }
 
-  function handleApply() {
+  function handleApply(): void {
     if (start && onApply) onApply({ start, end: end || start });
     setOpen(false);
   }
 
-  function prevMonth() {
-    if (leftMonth === 0) { setLeftMonth(11); setLeftYear(y => y - 1); }
-    else setLeftMonth(m => m - 1);
-    if (rightMonth === 0) { setRightMonth(11); setRightYear(y => y - 1); }
-    else setRightMonth(m => m - 1);
+  function prevMonth(): void {
+    if (leftMonth === 0) { setLeftMonth(11); setLeftYear((y) => y - 1); }
+    else setLeftMonth((m) => m - 1);
+    if (rightMonth === 0) { setRightMonth(11); setRightYear((y) => y - 1); }
+    else setRightMonth((m) => m - 1);
   }
 
-  function nextMonth() {
-    if (leftMonth === 11) { setLeftMonth(0); setLeftYear(y => y + 1); }
-    else setLeftMonth(m => m + 1);
-    if (rightMonth === 11) { setRightMonth(0); setRightYear(y => y + 1); }
-    else setRightMonth(m => m + 1);
+  function nextMonth(): void {
+    if (leftMonth === 11) { setLeftMonth(0); setLeftYear((y) => y + 1); }
+    else setLeftMonth((m) => m + 1);
+    if (rightMonth === 11) { setRightMonth(0); setRightYear((y) => y + 1); }
+    else setRightMonth((m) => m + 1);
   }
 
   const displayLabel = formatLabel(
@@ -382,15 +448,16 @@ export default function DateRangePicker({ onApply }) {
     end   ? fromISO(end)   : null,
   );
 
-  const fmtInput = (iso) => iso
-    ? fromISO(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : "";
+  const fmtInput = (iso: string): string =>
+    iso
+      ? fromISO(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+      : "";
 
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block", fontFamily: "Inter, sans-serif" }}>
 
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen((o) => !o)}
         style={{
           display: "flex",
           alignItems: "center",
@@ -412,7 +479,6 @@ export default function DateRangePicker({ onApply }) {
           </svg>
           {displayLabel}
         </span>
-        {/* Chevron — rotates 180° when open */}
         <svg
           width="14"
           height="14"
@@ -420,34 +486,29 @@ export default function DateRangePicker({ onApply }) {
           viewBox="0 0 24 24"
           stroke="#6B7280"
           strokeWidth={2}
-          style={{
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 0.2s ease",
-          }}
+          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}
         >
           <path d="M6 9l6 6 6-6" />
         </svg>
       </button>
 
       {open && (
-        <div style={{
-          position: "absolute",
-          top: "calc(100% + 8px)",
-          right: 0,
-          zIndex: 999,
-          background: "#fff",
-          borderRadius: 16,
-          boxShadow: "0 8px 40px rgba(91, 10, 255, 0.12)",
-          display: "flex",
-          overflow: "hidden",
-          minWidth: 680,
-        }}>
-
-          <div style={{
-            borderRight: "1px solid #F3F4F6",
-            padding: "16px 0",
-            minWidth: 130,
-          }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 8px)",
+            right: 0,
+            zIndex: 999,
+            background: "#fff",
+            borderRadius: 16,
+            boxShadow: "0 8px 40px rgba(91, 10, 255, 0.12)",
+            display: "flex",
+            overflow: "hidden",
+            minWidth: 680,
+          }}
+        >
+          {/* Quick ranges sidebar */}
+          <div style={{ borderRight: "1px solid #F3F4F6", padding: "16px 0", minWidth: 130 }}>
             {QUICK_RANGES.map((qr) => (
               <button
                 key={qr.label}
@@ -471,10 +532,11 @@ export default function DateRangePicker({ onApply }) {
             ))}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "0" }}>
-
+          {/* Calendars + footer */}
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: 0 }}>
             <div style={{ display: "flex", gap: 0, alignItems: "stretch", flex: 1 }}>
 
+              {/* Left calendar */}
               <div style={{ flex: 1, padding: "20px 24px 16px" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                   <button onClick={prevMonth} style={navBtnStyle}>
@@ -495,8 +557,9 @@ export default function DateRangePicker({ onApply }) {
                 />
               </div>
 
-              <div style={{ width: 1, background: "#F3F4F6", alignSelf: "stretch", margin: "0" }} />
+              <div style={{ width: 1, background: "#F3F4F6", alignSelf: "stretch", margin: 0 }} />
 
+              {/* Right calendar */}
               <div style={{ flex: 1, padding: "20px 24px 16px" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                   <div style={{ width: 28 }} />
@@ -516,18 +579,20 @@ export default function DateRangePicker({ onApply }) {
                   onDayClick={handleDayClick} onDayHover={setHoverDate}
                 />
               </div>
-
             </div>
 
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: 0,
-              padding: "16px 24px",
-              borderTop: "1px solid #F3F4F6",
-              gap: 12,
-            }}>
+            {/* Footer */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginTop: 0,
+                padding: "16px 24px",
+                borderTop: "1px solid #F3F4F6",
+                gap: 12,
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
                 <div
                   onClick={() => setActiveField("from")}
@@ -561,7 +626,6 @@ export default function DateRangePicker({ onApply }) {
                 <button onClick={handleApply} style={applyBtnStyle}>Apply</button>
               </div>
             </div>
-
           </div>
         </div>
       )}
@@ -571,14 +635,19 @@ export default function DateRangePicker({ onApply }) {
 
 // ─── Micro styles ─────────────────────────────────────────────────────────────
 
-const navBtnStyle = {
-  width: 28, height: 28,
-  display: "flex", alignItems: "center", justifyContent: "center",
-  background: "transparent", border: "none", cursor: "pointer",
+const navBtnStyle: React.CSSProperties = {
+  width: 28,
+  height: 28,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
   borderRadius: 6,
 };
 
-const inputStyle = {
+const inputStyle: React.CSSProperties = {
   border: "1px solid #E5E7EB",
   borderRadius: 8,
   padding: "8px 12px",
@@ -587,7 +656,7 @@ const inputStyle = {
   minWidth: 110,
 };
 
-const resetBtnStyle = {
+const resetBtnStyle: React.CSSProperties = {
   border: "1px solid #E5E7EB",
   background: "#fff",
   borderRadius: 8,
@@ -598,7 +667,7 @@ const resetBtnStyle = {
   fontWeight: 500,
 };
 
-const applyBtnStyle = {
+const applyBtnStyle: React.CSSProperties = {
   background: "#5B0AFF",
   border: "none",
   borderRadius: 8,
